@@ -7,8 +7,9 @@ class JobShift {
     int shiftQuantity;
     String shiftStartTime;
     int shiftValue;
+    bool isSelected=false;
 
-    JobShift({this.id, this.jobId, this.shiftEndTime, this.shiftQuantity, this.shiftStartTime, this.shiftValue});
+    JobShift({this.id, this.jobId, this.shiftEndTime, this.shiftQuantity, this.shiftStartTime, this.shiftValue,this.isSelected});
 
     factory JobShift.fromJson(Map<String, dynamic> json) {
         return JobShift(

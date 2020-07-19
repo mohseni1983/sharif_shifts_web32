@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage>
     });
     String username = loginEmailController.text;
     String password = loginPasswordController.text;
-    var result = await http.post('http://188.0.240.6:8020/' + 'token',
+    var result = await http.post('http://188.0.240.6:8021/' + 'token',
         body: {
           'grant_type': 'password',
           'username': username,
@@ -219,6 +219,10 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+    setState(() {
+      loginEmailController.text='09378170204';
+      loginPasswordController.text='48067';
+    });
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

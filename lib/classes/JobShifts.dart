@@ -51,6 +51,7 @@ class JobShift {
     int shiftQuantity;
     int shiftValue;
     bool deleted;
+    bool isSelected=false;
 
     JobShift(
         {this.shiftPersons,

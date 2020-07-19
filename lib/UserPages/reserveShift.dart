@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sharif_shifts/classes/JobShifts.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:http/http.dart' as http;
 class reserveShift extends StatefulWidget {
+
   @override
   _reserveShiftState createState() => _reserveShiftState();
 }
@@ -12,7 +14,15 @@ class reserveShift extends StatefulWidget {
 class _reserveShiftState extends State<reserveShift> {
   bool isSaving =false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  
+  JobShifts shift=new JobShifts();
+  int listState=0;
+
+  int selectedValue=-1;
+  void handleSelect(int val){
+    setState(() {
+      selectedValue=val;
+    });
+  }
   Future<JobShifts> getTodayShift() async{
     var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?now=' + '2020-06-18');
     if(response.statusCode==200 && response.body!=null){
@@ -22,6 +32,51 @@ class _reserveShiftState extends State<reserveShift> {
     }
     return null;
   }
+
+  void showInSnackBar(String value) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+            fontFamily: "Yekan"),
+      ),
+      backgroundColor: Colors.blue,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    setState(() {
+      getTodayShift().then((value) => shift=value);
+
+    });
+    if(shift!=null)
+     {
+       setState(() {
+         listState=1;
+
+       });
+       shift.jobShift.forEach((e) {
+         e.shiftPersons.forEach((a) {
+           if(a.madadkarId==)
+         });
+       });
+     }
+    else if(shift==null)
+      setState(() {
+        listState=2;
+      });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return isSaving
@@ -128,38 +183,135 @@ class _reserveShiftState extends State<reserveShift> {
                       ],
                     )),
                 Expanded(
-                  child: FutureBuilder<JobShifts>(
-                    future: getTodayShift(),
-                    builder: (context, snapshot) {
-                      if(snapshot.hasData){
-                        return ListView.builder(
-                          itemCount: snapshot.data.jobShift.length,
-                            itemBuilder: (context, index) {
-                              var item=snapshot.data.jobShift[index];
-                              if(item.deleted=false)
-                              return Row(
-                                children: [
-                                  Text('${item.shiftStartTime}'),
-                                  Padding(padding: EdgeInsets.only(right: 15),),
-                                  Text('${item.shiftEndTime}'),
+                  child:
+                  listState==1?ListView.builder(
+                itemCount: shift.jobShift.length,
+                  itemBuilder: (context, index) {
+                    var item=shift.jobShift[index];
+                    int itempcount=item.shiftPersons!=null?item.shiftPersons.length:0;
+                    int itemshiftcount=item.shiftQuantity-itempcount;
+                    if(item.deleted==false)
+                      return new Card(
+                        child:
+                        new Container(
+                          padding: EdgeInsets.all(5),
+                          child:
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                             Checkbox(
+                                value: item.isSelected,
+                               onChanged: (v){
+                                  if(itemshiftcount>0)
+                                  setState(() {
+                                    item.isSelected=v;
+                                  });
+                                  else
+                                    showInSnackBar('ظرفیت این شیفت تکمیل است');
+                               },
+                             ),
+                              Container(
+                                child: Column(
+                                  children: [
+                                    new Text('ساعت شروع شیفت'),
+                                    Padding(padding: EdgeInsets.only(bottom: 8),),
+                                    Text('${item.shiftStartTime}'),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: [
+                                    new Text('ساعت پایان شیفت'),
+                                    Padding(padding: EdgeInsets.only(bottom: 8),),
 
-                                ],
-                              );
-                              return Container(padding: EdgeInsets.all(0),);
-                            },);
-                      }else if (snapshot.hasError){
-                        return Text('Has Error');
-                      }
-                      return CircularProgressIndicator();
-                    },
-                  ),
-                )
+                                    Text('${item.shiftEndTime}'),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: [
+                                    new Text('ظرفیت باقیمانده'),
+                                    Padding(padding: EdgeInsets.only(bottom: 8),),
+
+                                    Text('${itemshiftcount}'),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: [
+                                    new Text('ظرفیت باقیمانده'),
+                                    Padding(padding: EdgeInsets.only(bottom: 8),),
+
+                                    Text('${itempcount}'),
+                                  ],
+                                ),
+                              )
+
+
+
+
+
+                            ],
+                          )
+                          ,
+                        ),
+                      );
+                    return Container(padding: EdgeInsets.all(0),);
+                  },):listState==2?
+                      Center(
+                        child: Container(
+                          child: new Text('دیتایی وجود ندارد'),
+                        ),
+                      ):
+                  Center(
+                    child: Container(
+                      child: new CircularProgressIndicator(),
+                    ),
+                  )
+
+        )
 
               ]),
     )));
   }
 
-  void reserve() {}
+  void reserve() {
+    shift.jobShift.forEach((element) {
+      if(element.deleted==false)
+      {
+        debugPrint('${element.shiftStartTime} ${element.shiftEndTime} ${element.isSelected}');
+       // if(element.isSelected)
+         // addShift(element.id, madadkarId)
+        
+      }
+    });
+  }
+  
+  void addShift(int shiftId,int madadkarId) async{
+    var response=await http.post('http://188.0.240.6:8021/api/Job/AddShiftForMadadkar',
+    body: {
+      'shiftid':'$shiftId',
+      'madadkarId':'$madadkarId'
+    }
+    );
+    if(response.statusCode==200)
+      debugPrint(response.body);
+  }
+
+  void removeShift(int shiftId,int madadkarId) async{
+    var response=await http.post('http://188.0.240.6:8021/api/Job/RemoveShiftForMadadkar',
+        body: {
+          'shiftid':'$shiftId',
+          'madadkarId':'$madadkarId'
+        }
+    );
+    if(response.statusCode==200)
+      debugPrint(response.body);
+  }
 
   Widget dateshow() {
     return Text('تست' ,style: TextStyle(color: Colors.yellow),textScaleFactor: 1.3,);

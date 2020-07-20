@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sharif_shifts/AdminPages/adminMainPage.dart';
 import 'package:sharif_shifts/UserPages/userMainPage.dart';
+import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:sharif_shifts/login/bubble.dart';
 import 'package:http/http.dart' as http;
@@ -62,13 +63,22 @@ class _LoginPageState extends State<LoginPage>
     );
     if (result.statusCode == 200) {
       //debugPrint('${result.body}');
+
       var jResult = json.decode(result.body);
+
+      //debugPrint(jResult['access_token']);
       setState(() {
+        //token=jResult;
+        globalVars.token=jResult['access_token'];
         isLogin=false;
       });
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return new   userMainPage();
-      },));
+
+      getMadadkarInfo().then((value) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+          return new   userMainPage();
+        },));
+
+      });
       //showInSnackBar('ورود به سیستم اوکی هست');
      // sharedPreferences = await SharedPreferences.getInstance();
       //debugPrint(jResult['access_token']);
@@ -95,6 +105,21 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> adminsLogin(){
   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => adminMainPage(),));
+  }
+
+  Future<void> getMadadkarInfo() async{
+    var response=await http.post('http://188.0.240.6:8021/api/Madadkar/GetMadadkarInfo',
+    headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${globalVars.token}"
+    }
+    );
+    if (response.statusCode==200){
+      var result=json.decode(response.body);
+      globalVars.MadadkarName=result['MadadkarName'];
+      globalVars.MadadkarId= result['MadadkarId'];
+    }
   }
 
 

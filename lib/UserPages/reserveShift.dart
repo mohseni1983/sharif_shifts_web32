@@ -66,7 +66,7 @@ class _reserveShiftState extends State<reserveShift> {
        });
        shift.jobShift.forEach((e) {
          e.shiftPersons.forEach((a) {
-           if(a.madadkarId==)
+           //if(a.madadkarId==)
          });
        });
      }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sharif_shifts/UserPages/reserveShift.dart';
+import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/login/login.dart';
 import 'package:sharif_shifts/ui/CustomWidgets.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
@@ -62,6 +63,7 @@ class _userMainPageState extends State<userMainPage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => reserveShift(),));
                             },
                           ),
+                          Text('${globalVars.MadadkarId}')
 
                         ],
                       )),

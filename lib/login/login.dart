@@ -69,6 +69,7 @@ class _LoginPageState extends State<LoginPage>
       //debugPrint(jResult['access_token']);
       setState(() {
         //token=jResult;
+        var x='aa';
         globalVars.token=jResult['access_token'];
         isLogin=false;
       });

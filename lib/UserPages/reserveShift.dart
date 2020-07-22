@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
-
+import 'package:persian_date/persian_date.dart' as psdate;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sharif_shifts/classes/JobShifts.dart';
+import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:http/http.dart' as http;
 class reserveShift extends StatefulWidget {
@@ -15,7 +17,7 @@ class _reserveShiftState extends State<reserveShift> {
   bool isSaving =false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   JobShifts shift=new JobShifts();
-  int listState=0;
+  int listState=2;
 
   int selectedValue=-1;
   void handleSelect(int val){
@@ -24,13 +26,15 @@ class _reserveShiftState extends State<reserveShift> {
     });
   }
   Future<JobShifts> getTodayShift() async{
-    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?now=' + '2020-06-18');
-    if(response.statusCode==200 && response.body!=null){
+    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?duration=' + '1');
+    debugPrint(response.body.length.toString());
+    if(response.statusCode==200 && response.body.length>4){
       var res=json.decode(response.body);
       var result=JobShifts.fromJson(res);
+      if(result!=null)
       return result;
     }
-    return null;
+    return new JobShifts();
   }
 
   void showInSnackBar(String value) {
@@ -55,33 +59,84 @@ class _reserveShiftState extends State<reserveShift> {
     // TODO: implement initState
 
     setState(() {
-      getTodayShift().then((value) => shift=value);
+      getTodayShift().then((value) {
+        if(value.jobDate!=null)
+          {
+            setState(() {
+              shift=value;
+            });
+            if(shift!=null)
+            {
+
+              if(shift.jobShift!=null)
+              {
+
+
+                shift.jobShift.forEach((e) {
+                  if(e.shiftPersons != null){
+                    e.shiftPersons.forEach((a) {
+                      if(a.madadkarId==globalVars.MadadkarId)
+                        setState(() {
+                          e.isSelected=true;
+                        });
+
+                      //if(a.madadkarId==)
+                    });
+                  }
+                });
+              }else{
+                setState(() {
+                  listState=2;
+                });
+              }
+              setState(() {
+                listState=1;
+
+              });
+            }
+            else if(shift==null)
+              setState(() {
+                listState=2;
+              });
+          }else{
+          setState(() {
+            shift=null;
+          });
+        }
+
+      });
 
     });
-    if(shift!=null)
-     {
-       setState(() {
-         listState=1;
 
-       });
-       shift.jobShift.forEach((e) {
-         e.shiftPersons.forEach((a) {
-           //if(a.madadkarId==)
-         });
-       });
-     }
-    else if(shift==null)
-      setState(() {
-        listState=2;
-      });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return isSaving
+    return
+    shift==null?
+        Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                 Text('شیفتی برای این روز تعریف نشده است'),
+                MaterialButton(
+                  color: Colors.green,
+                  child: new Text('بازگشت'),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ),
+          ),
+        ):
+
+      isSaving
         ? Scaffold(
-      body: new Container(
+      body: new
+      Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height >= 775.0
               ? MediaQuery.of(context).size.height
@@ -214,7 +269,7 @@ class _reserveShiftState extends State<reserveShift> {
                               Container(
                                 child: Column(
                                   children: [
-                                    new Text('ساعت شروع شیفت'),
+                                    new Text(' شروع'),
                                     Padding(padding: EdgeInsets.only(bottom: 8),),
                                     Text('${item.shiftStartTime}'),
                                   ],
@@ -223,7 +278,7 @@ class _reserveShiftState extends State<reserveShift> {
                               Container(
                                 child: Column(
                                   children: [
-                                    new Text('ساعت پایان شیفت'),
+                                    new Text('پایان'),
                                     Padding(padding: EdgeInsets.only(bottom: 8),),
 
                                     Text('${item.shiftEndTime}'),
@@ -233,7 +288,7 @@ class _reserveShiftState extends State<reserveShift> {
                               Container(
                                 child: Column(
                                   children: [
-                                    new Text('ظرفیت باقیمانده'),
+                                    new Text('باقیمانده'),
                                     Padding(padding: EdgeInsets.only(bottom: 8),),
 
                                     Text('${itemshiftcount}'),
@@ -243,7 +298,7 @@ class _reserveShiftState extends State<reserveShift> {
                               Container(
                                 child: Column(
                                   children: [
-                                    new Text('ظرفیت باقیمانده'),
+                                    new Text('رزرو'),
                                     Padding(padding: EdgeInsets.only(bottom: 8),),
 
                                     Text('${itempcount}'),
@@ -283,37 +338,53 @@ class _reserveShiftState extends State<reserveShift> {
     shift.jobShift.forEach((element) {
       if(element.deleted==false)
       {
-        debugPrint('${element.shiftStartTime} ${element.shiftEndTime} ${element.isSelected}');
+        //debugPrint('${element.shiftStartTime} ${element.shiftEndTime} ${element.isSelected}');
        // if(element.isSelected)
          // addShift(element.id, madadkarId)
+        if(element.isSelected){
+          addShift(element.id, globalVars.MadadkarId);
+        }
+        if(!element.isSelected){
+          removeShift(element.id, globalVars.MadadkarId);
+        }
+
+        //
         
       }
     });
+    showInSnackBar('تغییرات ذخیره شد.');
+
+    Navigator.of(context).pop();
   }
   
   void addShift(int shiftId,int madadkarId) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/AddShiftForMadadkar',
-    body: {
-      'shiftid':'$shiftId',
-      'madadkarId':'$madadkarId'
-    }
+    var response=await http.post('http://188.0.240.6:8021/api/Job/AddShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
+
     );
     if(response.statusCode==200)
       debugPrint(response.body);
   }
 
   void removeShift(int shiftId,int madadkarId) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/RemoveShiftForMadadkar',
-        body: {
-          'shiftid':'$shiftId',
-          'madadkarId':'$madadkarId'
-        }
+    var response=await http.post('http://188.0.240.6:8021/api/Job/RemoveShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
+
     );
     if(response.statusCode==200)
       debugPrint(response.body);
   }
 
   Widget dateshow() {
-    return Text('تست' ,style: TextStyle(color: Colors.yellow),textScaleFactor: 1.3,);
+    String dt;
+    psdate.PersianDate p = new psdate.PersianDate();
+    dt='شیفت تعریف نشده';
+    if(shift!=null) {
+      dt = p.gregorianToJalali(shift.jobDate);
+      dt = dt.replaceAll('-', '/').substring(0, 10);
+    }
+    return Text(
+      '$dt',
+      style: TextStyle(color: Colors.yellow),
+      textScaleFactor: 1.4,
+    );
   }
 }

@@ -105,7 +105,10 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> adminsLogin(){
+    if(adminUserController.text=='modir' && adminPasswordController.text=='iran1399')
   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => adminMainPage(),));
+    else
+      showInSnackBar('نام کاربری و رمز عبور اشتباه است');
   }
 
   Future<void> getMadadkarInfo() async{
@@ -245,10 +248,10 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
-    setState(() {
+  /*  setState(() {
       loginEmailController.text='09378170204';
       loginPasswordController.text='48067';
-    });
+    });*/
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

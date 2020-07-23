@@ -176,7 +176,7 @@ class _addScheduleEventState extends State<addScheduleEvent> {
           type: 'date', //optional ,default value is date.
 
           //initial: '1398/03/20 19:50', //optional
-          //min: mindate,
+          min: mindate,
           // max: '1399/06/01',
           initial: startdate,
 

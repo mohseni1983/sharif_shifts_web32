@@ -13,6 +13,7 @@ class ListOfDay extends StatefulWidget {
 
 class _ListOfDayState extends State<ListOfDay> {
 
+  String Today='';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void showInSnackBar(String value) {
     FocusScope.of(context).requestFocus(new FocusNode());
@@ -32,7 +33,7 @@ class _ListOfDayState extends State<ListOfDay> {
   }
 
   Future<JobShifts> getTodayShift() async{
-    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?duration=' + '1');
+    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule');
     debugPrint(response.body.length.toString());
     if(response.statusCode==200 && response.body.length>4){
       var res=json.decode(response.body);
@@ -52,7 +53,7 @@ class _ListOfDayState extends State<ListOfDay> {
           child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: Text('لیست امروز'),
+              title: Text('لیست امروز $Today'),
 
             ),
             body:
@@ -88,6 +89,7 @@ class _ListOfDayState extends State<ListOfDay> {
                         break;
                       case ConnectionState.done:
                         if(snapshot.hasData){
+
                         if(snapshot.data.jobShift!=null)
                           return ListView.builder(
                             itemCount: snapshot.data.jobShift.length,
@@ -110,7 +112,7 @@ class _ListOfDayState extends State<ListOfDay> {
                                             new Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                new Text('شیفت:  ${snapshot.data.jobShift[index].shiftStartTime} - ${snapshot.data.jobShift[index].shiftEndTime} '),
+                                                new Text('شیفت:  ${snapshot.data.jobShift[index].shiftStartTime} - ${snapshot.data.jobShift[index].shiftEndTime} ** ${dateshow(snapshot.data.jobDate)} '),
                                                 new Icon(Icons.arrow_forward)
                                               ],
                                             )
@@ -156,6 +158,16 @@ class _ListOfDayState extends State<ListOfDay> {
           ),
         );
 
+  }
+  String dateshow(String date) {
+    String dt;
+    psdate.PersianDate p = new psdate.PersianDate();
+    dt='شیفت تعریف نشده';
+
+    dt = p.gregorianToJalali(date);
+    dt = dt.replaceAll('-', '/').substring(0, 10);
+
+    return dt;
   }
 }
 
@@ -213,7 +225,7 @@ class _ShiftDetailsState extends State<ShiftDetails> {
                 child: Text('خیر'),
               ),
               FlatButton(
-                onPressed: () =>Navigator.of(context).pop(true);
+                onPressed: () =>Navigator.of(context).pop(true),
                 /*Navigator.of(context).pop(true)*/
                 child: Text('بلی'),
               ),
@@ -300,7 +312,20 @@ class _ShiftDetailsState extends State<ShiftDetails> {
                                                   MaterialButton(
                                                     color: Colors.green,
 
-                                                    onPressed:  (){},
+                                                    onPressed:  (){
+                                                      _agreeDialog().then((value) {
+                                                        if(value)
+                                                          _registerEnterTime(s[index].id,s[index].shiftId).then((value) {
+                                                            if(value)
+                                                              {
+                                                                setState(() {
+
+                                                                });
+                                                              }
+                                                          });
+                                                      }
+                                                      );
+                                                    },
                                                     child: Text('ثبت حضور'),
                                                   ):
                                                   MaterialButton(
@@ -312,21 +337,35 @@ class _ShiftDetailsState extends State<ShiftDetails> {
                                                   )
                                                   ,
                                                   Padding(padding: EdgeInsets.only(left: 15),),
-                                                  s[index].enterTime!=null && s[index].exitTime==null?
+                                                  s[index].enterTime==null?
+                                                  MaterialButton(
+                                                    color: Colors.red,
+
+                                                    child: Text('ثبت خروج'),
+                                                  ):
+                                                   s[index].exitTime==null?
                                                   MaterialButton(
                                                     color: Colors.red,
                                                     onPressed: (){
-                                                      if(_agreeDialog()==true){
+                                                     _agreeDialog().then((value) {
+                                                       if(value)
+                                                         _registerExitTime(s[index].id,s[index].shiftId).then((value) {
+                                                           if(value)
+                                                             setState(() {
 
-                                                      }
+                                                             });
+                                                         }
+                                                         );
+                                                     });
                                                     },
                                                     child: Text('ثبت خروج'),
                                                   ):
+
                                                   MaterialButton(
                                                     disabledColor: Colors.grey,
                                                     color: Colors.red,
                                                     //onPressed: (){},
-                                                    child: Text('${s[index].exitTime..substring(0,8)}'),
+                                                    child: Text('${s[index].exitTime.substring(0,8)}'),
                                                   )
                                                   ,
                                                 ],
@@ -368,6 +407,24 @@ class _ShiftDetailsState extends State<ShiftDetails> {
       dt = dt.replaceAll('-', '/').substring(0, 10);
     
     return dt;
+  }
+
+  Future<bool> _registerEnterTime(int ShiftPersonId,int JobShiftId ) async{
+    var response=await http.post('http://188.0.240.6:8021/api/Job/AddEntranceTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
+    if(response.statusCode==200)
+      return true;
+    return false;
+
+
+  }
+
+  Future<bool> _registerExitTime(int ShiftPersonId,int JobShiftId ) async{
+    var response=await http.post('http://188.0.240.6:8021/api/Job/AddExitTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
+    if(response.statusCode==200)
+      return true;
+    return false;
+
+
   }
 
 }

@@ -4,6 +4,7 @@ import 'package:persian_date/persian_date.dart' as psdate;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sharif_shifts/classes/JobShifts.dart';
+import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:http/http.dart' as http;
 class ListOfDay extends StatefulWidget {
@@ -33,7 +34,7 @@ class _ListOfDayState extends State<ListOfDay> {
   }
 
   Future<JobShifts> getTodayShift() async{
-    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule');
+    var response=await http.get('${globalVars.s_url}api/Job/GetTodyJobSchedule');
     debugPrint(response.body.length.toString());
     if(response.statusCode==200 && response.body.length>4){
       var res=json.decode(response.body);
@@ -95,7 +96,7 @@ class _ListOfDayState extends State<ListOfDay> {
                             itemCount: snapshot.data.jobShift.length,
                               itemBuilder: (context, index) {
                                 return GestureDetector(
-                                  onDoubleTap: (){
+                                  onTap: (){
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => ShiftDetails(
                                       shift: snapshot.data.jobShift[index],
                                       jobDate: snapshot.data.jobDate,
@@ -200,7 +201,7 @@ class _ShiftDetailsState extends State<ShiftDetails> {
   }
 
   Future<JobShift> getShift() async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/GetShiftById?ShiftId=${widget.shift.id}');
+    var response=await http.post('${globalVars.s_url}api/Job/GetShiftById?ShiftId=${widget.shift.id}');
     debugPrint(response.body.length.toString());
     if(response.statusCode==200 ){
       var res=json.decode(response.body);
@@ -304,7 +305,17 @@ class _ShiftDetailsState extends State<ShiftDetails> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('${s[index].madadkarName}'),
+                                            Container(
+                                              child: Row(
+                                                children: [
+                                                  CircleAvatar(
+                                                    child: Text('${index+1}'),
+                                                  ),
+                                                  Padding(padding: EdgeInsets.only(left: 3),),
+                                                  Text('${s[index].madadkarName}'),
+                                                ],
+                                              ),
+                                            ),
                                             Container(
                                               child: Row(
                                                 children: [
@@ -410,7 +421,7 @@ class _ShiftDetailsState extends State<ShiftDetails> {
   }
 
   Future<bool> _registerEnterTime(int ShiftPersonId,int JobShiftId ) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/AddEntranceTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
+    var response=await http.post('${globalVars.s_url}api/Job/AddEntranceTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
     if(response.statusCode==200)
       return true;
     return false;
@@ -419,7 +430,7 @@ class _ShiftDetailsState extends State<ShiftDetails> {
   }
 
   Future<bool> _registerExitTime(int ShiftPersonId,int JobShiftId ) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/AddExitTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
+    var response=await http.post('${globalVars.s_url}api/Job/AddExitTime?ShiftPersonId=$ShiftPersonId&JobShiftId=$JobShiftId');
     if(response.statusCode==200)
       return true;
     return false;

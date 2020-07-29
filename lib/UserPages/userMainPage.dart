@@ -23,18 +23,22 @@ class _userMainPageState extends State<userMainPage> {
                   textDirection: TextDirection.rtl,
                   child: AlertDialog(
                     title: Text('آیا اطمینان دارید؟'),
-                    content: Text('آیا می خواهید از اپ خاریج شوید'),
+                    content: Text('آیا می خواهید از اپ خارج شوید'),
                     actions: <Widget>[
                       FlatButton(
                         onPressed: () => Navigator.of(context).pop(false),
                         child: Text('خیر'),
                       ),
                       FlatButton(
-                        onPressed: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            )),
+                        onPressed: () {
+
+                          globalVars.token="";
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ));
+    },
                         /*Navigator.of(context).pop(true)*/
                         child: Text('بلی'),
                       ),
@@ -82,7 +86,7 @@ class _userMainPageState extends State<userMainPage> {
                               children: [
                                 Container(
                                   alignment: Alignment.center,
-                                  height: 40,
+                                  height: 60,
                                   child: new Column(
                                     children: [
                                       new Container(
@@ -137,4 +141,6 @@ class _userMainPageState extends State<userMainPage> {
                               ],
                             )))))));
   }
+
+
 }

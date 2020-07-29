@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sharif_shifts/AdminPages/listOfDay.dart';
+import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/login/login.dart';
 import 'package:sharif_shifts/ui/CustomWidgets.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
@@ -24,14 +25,17 @@ class _adminMainPageState extends State<adminMainPage> {
             textDirection: TextDirection.rtl,
             child:           AlertDialog(
               title: Text('آیا اطمینان دارید؟'),
-              content: Text('آیا می خواهید از اپ خاریج شوید'),
+              content: Text('آیا می خواهید از اپ خارج شوید'),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text('خیر'),
                 ),
                 FlatButton(
-                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage(),)),
+                  onPressed: () {
+                    globalVars.token="";
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage(),));
+                  },
                   /*Navigator.of(context).pop(true)*/
                   child: Text('بلی'),
                 ),
@@ -112,6 +116,14 @@ class _adminMainPageState extends State<adminMainPage> {
                                     ));
                               },
                             ),
+                            gridIcon(
+                              icon: Icon(FontAwesomeIcons.list,
+                              color: Colors.black,
+                                size: 35,
+                              ),
+                              label: 'گزارش روزانه',
+                              
+                            )
                           ],
                         )),
                   )))),

@@ -16,6 +16,7 @@ class gridIcon extends StatelessWidget{
       new Container(
         height: 110,
         width: 110,
+        //padding: EdgeInsets.all(125),
         margin: EdgeInsets.all(10),
         child:  Container(
           decoration: BoxDecoration(
@@ -65,7 +66,7 @@ class gridIcon extends StatelessWidget{
                           //height: 43,
                           alignment: Alignment.center,
                           width: double.infinity,
-                          child: Text(label,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w900),),
+                          child: Text(label,style: TextStyle(color: Colors.white),textScaleFactor:MediaQuery.of(context).size.height >= 775.0? 1.1:0.8,),
                         ),
                       )
                     ],

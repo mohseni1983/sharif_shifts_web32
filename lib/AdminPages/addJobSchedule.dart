@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:sharif_shifts/classes/globalVars.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _addScheduleEventState extends State<addScheduleEvent> {
   //دریافت دیتای مربوط به شیفت ها
   Future<JobShifts> GetShiftData(String date) async {
     var result = await http.get(
-        'http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?now=' +
+        '${globalVars.s_url}api/Job/GetTodyJobSchedule?now=' +
             date);
     if (result.statusCode == 200 && json.decode(result.body) != null) {
       var jsonresult = json.decode(result.body);
@@ -147,7 +148,7 @@ class _addScheduleEventState extends State<addScheduleEvent> {
     var bodyJson = jsonEncode(body);
     //debugPrint('============================================');
    // debugPrint(bodyJson.toString());
-    var result = await http.post('http://188.0.240.6:8021/api/Job/AddSchedule',
+    var result = await http.post('${globalVars.s_url}api/Job/AddSchedule',
         body: bodyJson,
         headers: {
           "accept": "application/json",

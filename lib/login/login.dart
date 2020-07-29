@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage>
     });
     String username = loginEmailController.text;
     String password = loginPasswordController.text;
-    var result = await http.post('http://188.0.240.6:8021/' + 'token',
+    var result = await http.post('${globalVars.s_url}' + 'token',
         body: {
           'grant_type': 'password',
           'username': username,
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> getMadadkarInfo() async{
-    var response=await http.post('http://188.0.240.6:8021/api/Madadkar/GetMadadkarInfo',
+    var response=await http.post('${globalVars.s_url}api/Madadkar/GetMadadkarInfo',
     headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -131,41 +131,17 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    return new Directionality(textDirection: TextDirection.rtl,
-        child:       new Scaffold(
-          key: _scaffoldKey,
-          body: NotificationListener<OverscrollIndicatorNotification>(
-            onNotification: (overscroll) {
-              overscroll.disallowGlow();
-            },
-            child:isLogin?
-            Center(child: new Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height >= 775.0
-                  ? MediaQuery.of(context).size.height
-                  : 775.0,
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [
-                      Theme.Colors.loginGradientStart.withAlpha(90),
-                      Theme.Colors.loginGradientEnd.withAlpha(90)
-                    ],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              child:
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new CircularProgressIndicator(backgroundColor: Color(0xFFB4B4B4),valueColor:new AlwaysStoppedAnimation<Color>(Colors.yellow),),
-                new Text('در حال ورود به سیستم',style: TextStyle(color: Colors.white),textScaleFactor: 1.3,)
-              ],
-            ),)):
-
-            SingleChildScrollView(
-              child: Container(
+    return WillPopScope(
+      onWillPop: (){},
+      child:       new Directionality(textDirection: TextDirection.rtl,
+          child:       new Scaffold(
+            key: _scaffoldKey,
+            body: NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (overscroll) {
+                overscroll.disallowGlow();
+              },
+              child:isLogin?
+              Center(child: new Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
@@ -182,57 +158,85 @@ class _LoginPageState extends State<LoginPage>
                       tileMode: TileMode.clamp),
                 ),
                 child:
-
                 Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: new Image(
-                          width: 250.0,
-                          height: 250.0,
-                          fit: BoxFit.fill,
-                          image: new AssetImage('assets/images/Mini-Logo.png')),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: _buildMenuBar(context),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: PageView(
-                        controller: _pageController,
-                        onPageChanged: (i) {
-                          if (i == 0) {
-                            setState(() {
-                              right = Colors.red;
-                              left = Colors.white;
-                            });
-                          } else if (i == 1) {
-                            setState(() {
-                              right = Colors.white;
-                              left = Colors.red;
-                            });
-                          }
-                        },
-                        children: <Widget>[
-                          new ConstrainedBox(
-                            constraints: const BoxConstraints.expand(),
-                            child: _buildSignIn(context),
-                          ),
-                          new ConstrainedBox(
-                            constraints: const BoxConstraints.expand(),
-                            child: _buildSignUp(context),
-                          ),
-                        ],
-                      ),
-                    ),
+                    new CircularProgressIndicator(backgroundColor: Color(0xFFB4B4B4),valueColor:new AlwaysStoppedAnimation<Color>(Colors.yellow),),
+                    new Text('در حال ورود به سیستم',style: TextStyle(color: Colors.white),textScaleFactor: 1.3,)
                   ],
+                ),)):
+
+              SingleChildScrollView(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height >= 775.0
+                      ? MediaQuery.of(context).size.height
+                      : 775.0,
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.Colors.loginGradientStart.withAlpha(90),
+                          Theme.Colors.loginGradientEnd.withAlpha(90)
+                        ],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  child:
+
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.0),
+                        child: new Image(
+                            width: 250.0,
+                            height: 250.0,
+                            fit: BoxFit.fill,
+                            image: new AssetImage('assets/images/Mini-Logo.png')),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.0),
+                        child: _buildMenuBar(context),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (i) {
+                            if (i == 0) {
+                              setState(() {
+                                right = Colors.red;
+                                left = Colors.white;
+                              });
+                            } else if (i == 1) {
+                              setState(() {
+                                right = Colors.white;
+                                left = Colors.red;
+                              });
+                            }
+                          },
+                          children: <Widget>[
+                            new ConstrainedBox(
+                              constraints: const BoxConstraints.expand(),
+                              child: _buildSignIn(context),
+                            ),
+                            new ConstrainedBox(
+                              constraints: const BoxConstraints.expand(),
+                              child: _buildSignUp(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        )
+          )
+      )
+      ,
     );
   }
 
@@ -271,7 +275,7 @@ class _LoginPageState extends State<LoginPage>
         style: TextStyle(
             color: Colors.white,
             fontSize: 16.0,
-            fontFamily: "Yekan"),
+            fontFamily: "Samim"),
       ),
       backgroundColor: Colors.blue,
       duration: Duration(seconds: 3),
@@ -301,7 +305,7 @@ class _LoginPageState extends State<LoginPage>
                   style: TextStyle(
                       color: left,
                       fontSize: 16.0,
-                      fontFamily: "Yekan"),
+                      fontFamily: "Samim"),
                 ),
               ),
             ),
@@ -316,7 +320,7 @@ class _LoginPageState extends State<LoginPage>
                   style: TextStyle(
                       color: right,
                       fontSize: 16.0,
-                      fontFamily: "Yekan"),
+                      fontFamily: "Samim"),
                 ),
               ),
             ),
@@ -354,7 +358,7 @@ class _LoginPageState extends State<LoginPage>
                           controller: loginEmailController,
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(
-                              fontFamily: "Yekan",
+                              fontFamily: "Samim",
                               fontSize: 16.0,
                               color: Colors.black),
                           decoration: InputDecoration(
@@ -366,7 +370,7 @@ class _LoginPageState extends State<LoginPage>
                             ),
                             hintText: "نام کاربری",
                             hintStyle: TextStyle(
-                                fontFamily: "Yekan", fontSize: 17.0),
+                                fontFamily: "Samim", fontSize: 17.0),
                           ),
                         ),
                       ),
@@ -383,7 +387,7 @@ class _LoginPageState extends State<LoginPage>
                           controller: loginPasswordController,
                           obscureText: _obscureTextLogin,
                           style: TextStyle(
-                              fontFamily: "Yekan",
+                              fontFamily: "Samim",
                               fontSize: 16.0,
                               color: Colors.black),
                           decoration: InputDecoration(
@@ -395,7 +399,7 @@ class _LoginPageState extends State<LoginPage>
                             ),
                             hintText: "رمز عبور",
                             hintStyle: TextStyle(
-                                fontFamily: "Yekan", fontSize: 17.0),
+                                fontFamily: "Samim", fontSize: 17.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleLogin,
                               child: Icon(
@@ -452,7 +456,7 @@ class _LoginPageState extends State<LoginPage>
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 25.0,
-                            fontFamily: "Yekan"),
+                            fontFamily: "Samim"),
                       ),
                     ),
                     onPressed: () =>
@@ -472,7 +476,7 @@ class _LoginPageState extends State<LoginPage>
                       decoration: TextDecoration.underline,
                       color: Colors.white,
                       fontSize: 16.0,
-                      fontFamily: "Yekan"),
+                      fontFamily: "Samim"),
                 )),
           ),
 */
@@ -549,7 +553,7 @@ class _LoginPageState extends State<LoginPage>
                           controller: adminUserController,
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(
-                              fontFamily: "Yekan",
+                              fontFamily: "Samim",
                               fontSize: 16.0,
                               color: Colors.black),
                           decoration: InputDecoration(
@@ -560,7 +564,7 @@ class _LoginPageState extends State<LoginPage>
                             ),
                             hintText: "ایمیل",
                             hintStyle: TextStyle(
-                                fontFamily: "Yekan", fontSize: 16.0),
+                                fontFamily: "Samim", fontSize: 16.0),
                           ),
                         ),
                       ),
@@ -577,7 +581,7 @@ class _LoginPageState extends State<LoginPage>
                           controller: adminPasswordController,
                           obscureText: _obscureTextSignup,
                           style: TextStyle(
-                              fontFamily: "Yekan",
+                              fontFamily: "Samim",
                               fontSize: 16.0,
                               color: Colors.black),
                           decoration: InputDecoration(
@@ -588,7 +592,7 @@ class _LoginPageState extends State<LoginPage>
                             ),
                             hintText: "رمز عبور",
                             hintStyle: TextStyle(
-                                fontFamily: "Yekan", fontSize: 16.0),
+                                fontFamily: "Samim", fontSize: 16.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleSignup,
                               child: Icon(
@@ -644,7 +648,7 @@ class _LoginPageState extends State<LoginPage>
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 25.0,
-                            fontFamily: "Yekan"),
+                            fontFamily: "Samim"),
                       ),
                     ),
                     onPressed: () =>

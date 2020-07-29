@@ -26,7 +26,7 @@ class _reserveShiftState extends State<reserveShift> {
     });
   }
   Future<JobShifts> getTodayShift() async{
-    var response=await http.get('http://188.0.240.6:8021/api/Job/GetTodyJobSchedule?duration=' + '1');
+    var response=await http.get('${globalVars.s_url}api/Job/GetTodyJobSchedule?duration=' + '1');
     debugPrint(response.body.length.toString());
     if(response.statusCode==200 && response.body.length>4){
       var res=json.decode(response.body);
@@ -111,9 +111,31 @@ class _reserveShiftState extends State<reserveShift> {
     super.initState();
   }
 
+ // DateTime ftime=DateTime.parse('12:00');
+  //DateTime etime=DateTime.parse('21:00');
+
   @override
   Widget build(BuildContext context) {
     return
+    DateTime.now().hour<12 || DateTime.now().hour>21?
+    Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('ساعت رزرو شیفت بین 12 تا 21 می باشد'),
+            MaterialButton(
+              color: Colors.green,
+              child: new Text('بازگشت'),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            )
+          ],
+        ),
+      ),
+    ):
+
     shift==null?
         Scaffold(
           body: Center(
@@ -181,11 +203,17 @@ class _reserveShiftState extends State<reserveShift> {
               left: 10.0,
               child: FloatingActionButton(
                 heroTag: 'ذخیره سازی',
+
                 onPressed: () {
                   reserve();
                 },
                 elevation: 3.0,
-                child: Icon(Icons.save),
+                child: Column(
+                  children: [
+                    Icon(Icons.save),
+                    Text('ذخیره')
+                  ],
+                ),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
                     side: BorderSide(color: Colors.white, width: 2)),
@@ -358,7 +386,7 @@ class _reserveShiftState extends State<reserveShift> {
   }
   
   void addShift(int shiftId,int madadkarId) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/AddShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
+    var response=await http.post('${globalVars.s_url}api/Job/AddShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
 
     );
     if(response.statusCode==200)
@@ -366,7 +394,7 @@ class _reserveShiftState extends State<reserveShift> {
   }
 
   void removeShift(int shiftId,int madadkarId) async{
-    var response=await http.post('http://188.0.240.6:8021/api/Job/RemoveShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
+    var response=await http.post('${globalVars.s_url}api/Job/RemoveShiftForMadadkar?shiftid=$shiftId&madadkarId=$madadkarId',
 
     );
     if(response.statusCode==200)

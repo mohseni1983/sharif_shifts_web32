@@ -9,6 +9,7 @@ import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:sharif_shifts/login/bubble.dart';
 import 'package:http/http.dart' as http;
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -18,7 +19,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  bool isLogin=false;
+  bool isLogin = false;
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController adminNameController = new TextEditingController();
   TextEditingController adminPasswordController = new TextEditingController();
   TextEditingController signupConfirmPasswordController =
-  new TextEditingController();
+      new TextEditingController();
 
   PageController _pageController;
 
@@ -50,17 +50,15 @@ class _LoginPageState extends State<LoginPage>
   //Function for login Madadkars
   Future<void> loginToSystem() async {
     setState(() {
-      isLogin=true;
+      isLogin = true;
     });
     String username = loginEmailController.text;
     String password = loginPasswordController.text;
-    var result = await http.post('${globalVars.s_url}' + 'token',
-        body: {
-          'grant_type': 'password',
-          'username': username,
-          'password': password
-        }
-    );
+    var result = await http.post('${globalVars.s_url}' + 'token', body: {
+      'grant_type': 'password',
+      'username': username,
+      'password': password
+    });
     if (result.statusCode == 200) {
       //debugPrint('${result.body}');
 
@@ -69,21 +67,22 @@ class _LoginPageState extends State<LoginPage>
       //debugPrint(jResult['access_token']);
       setState(() {
         //token=jResult;
-        var x='aa';
-        globalVars.token=jResult['access_token'];
-        isLogin=false;
+        var x = 'aa';
+        globalVars.token = jResult['access_token'];
+        isLogin = false;
       });
 
       getMadadkarInfo().then((value) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-          return new   userMainPage();
-        },));
-
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return new userMainPage();
+          },
+        ));
       });
       //showInSnackBar('ورود به سیستم اوکی هست');
-     // sharedPreferences = await SharedPreferences.getInstance();
+      // sharedPreferences = await SharedPreferences.getInstance();
       //debugPrint(jResult['access_token']);
-    //  sharedPreferences.setString('token', jResult['access_token']);
+      //  sharedPreferences.setString('token', jResult['access_token']);
       //debugPrint(prefs.get('token'));
       //http.post(ServerUrl+'')
       /*madadkarInfo info = await getMadadkarInfo();
@@ -92,151 +91,159 @@ class _LoginPageState extends State<LoginPage>
       });
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => mainPage(madadkar: info,),));*/
-     /* getMadadkarInfo().then((value) {
+      /* getMadadkarInfo().then((value) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => mainPage(madadkar: value,),));
       });*/
     } else {
       setState(() {
-        isLogin=false;
+        isLogin = false;
       });
       showInSnackBar('نام کاربری یا رمز عبور اشتباه است');
     }
   }
 
-  Future<void> adminsLogin(){
-    if(adminUserController.text=='modir' && adminPasswordController.text=='iran1399')
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => adminMainPage(),));
+  Future<void> adminsLogin() {
+    if (adminUserController.text == 'modir' &&
+        adminPasswordController.text == 'iran1399')
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => adminMainPage(),
+          ));
     else
       showInSnackBar('نام کاربری و رمز عبور اشتباه است');
   }
 
-  Future<void> getMadadkarInfo() async{
-    var response=await http.post('${globalVars.s_url}api/Madadkar/GetMadadkarInfo',
-    headers: {
+  Future<void> getMadadkarInfo() async {
+    var response = await http
+        .post('${globalVars.s_url}api/Madadkar/GetMadadkarInfo', headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${globalVars.token}"
-    }
-    );
-    if (response.statusCode==200){
-      var result=json.decode(response.body);
-      globalVars.MadadkarName=result['MadadkarName'];
-      globalVars.MadadkarId= result['MadadkarId'];
+    });
+    if (response.statusCode == 200) {
+      var result = json.decode(response.body);
+      globalVars.MadadkarName = result['MadadkarName'];
+      globalVars.MadadkarId = result['MadadkarId'];
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){},
-      child:       new Directionality(textDirection: TextDirection.rtl,
-          child:       new Scaffold(
+      onWillPop: () {},
+      child: new Directionality(
+          textDirection: TextDirection.rtl,
+          child: new Scaffold(
             key: _scaffoldKey,
             body: NotificationListener<OverscrollIndicatorNotification>(
               onNotification: (overscroll) {
                 overscroll.disallowGlow();
               },
-              child:isLogin?
-              Center(child: new Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height >= 775.0
-                    ? MediaQuery.of(context).size.height
-                    : 775.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientStart.withAlpha(90),
-                        Theme.Colors.loginGradientEnd.withAlpha(90)
-                      ],
-                      begin: const FractionalOffset(0.0, 0.0),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new CircularProgressIndicator(backgroundColor: Color(0xFFB4B4B4),valueColor:new AlwaysStoppedAnimation<Color>(Colors.yellow),),
-                    new Text('در حال ورود به سیستم',style: TextStyle(color: Colors.white),textScaleFactor: 1.3,)
-                  ],
-                ),)):
-
-              SingleChildScrollView(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height >= 775.0
-                      ? MediaQuery.of(context).size.height
-                      : 775.0,
-                  decoration: new BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Theme.Colors.loginGradientStart.withAlpha(90),
-                          Theme.Colors.loginGradientEnd.withAlpha(90)
+              child: isLogin
+                  ? Center(
+                      child: new Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height >= 775.0
+                          ? MediaQuery.of(context).size.height
+                          : 775.0,
+                      decoration: new BoxDecoration(
+                        gradient: new LinearGradient(
+                            colors: [
+                              Theme.Colors.loginGradientStart.withAlpha(90),
+                              Theme.Colors.loginGradientEnd.withAlpha(90)
+                            ],
+                            begin: const FractionalOffset(0.0, 0.0),
+                            end: const FractionalOffset(1.0, 1.0),
+                            stops: [0.0, 1.0],
+                            tileMode: TileMode.clamp),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new CircularProgressIndicator(
+                            backgroundColor: Color(0xFFB4B4B4),
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.yellow),
+                          ),
+                          new Text(
+                            'در حال ورود به سیستم',
+                            style: TextStyle(color: Colors.white),
+                            textScaleFactor: 1.3,
+                          )
                         ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  child:
-
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.0),
-                        child: new Image(
-                            width: 250.0,
-                            height: 250.0,
-                            fit: BoxFit.fill,
-                            image: new AssetImage('assets/images/Mini-Logo.png')),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.0),
-                        child: _buildMenuBar(context),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: PageView(
-                          controller: _pageController,
-                          onPageChanged: (i) {
-                            if (i == 0) {
-                              setState(() {
-                                right = Colors.red;
-                                left = Colors.white;
-                              });
-                            } else if (i == 1) {
-                              setState(() {
-                                right = Colors.white;
-                                left = Colors.red;
-                              });
-                            }
-                          },
+                    ))
+                  : SingleChildScrollView(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height >= 775.0
+                            ? MediaQuery.of(context).size.height
+                            : 775.0,
+                        decoration: new BoxDecoration(
+                          gradient: new LinearGradient(
+                              colors: [
+                                Theme.Colors.loginGradientStart.withAlpha(90),
+                                Theme.Colors.loginGradientEnd.withAlpha(90)
+                              ],
+                              begin: const FractionalOffset(0.0, 0.0),
+                              end: const FractionalOffset(1.0, 1.0),
+                              stops: [0.0, 1.0],
+                              tileMode: TileMode.clamp),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            new ConstrainedBox(
-                              constraints: const BoxConstraints.expand(),
-                              child: _buildSignIn(context),
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.0),
+                              child: new Image(
+                                  width: 250.0,
+                                  height: 250.0,
+                                  fit: BoxFit.fill,
+                                  image: new AssetImage(
+                                      'assets/images/Mini-Logo.png')),
                             ),
-                            new ConstrainedBox(
-                              constraints: const BoxConstraints.expand(),
-                              child: _buildSignUp(context),
+                            //Text('${DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30))}'),
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.0),
+                              child: _buildMenuBar(context),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: PageView(
+                                controller: _pageController,
+                                onPageChanged: (i) {
+                                  if (i == 0) {
+                                    setState(() {
+                                      right = Colors.red;
+                                      left = Colors.white;
+                                    });
+                                  } else if (i == 1) {
+                                    setState(() {
+                                      right = Colors.white;
+                                      left = Colors.red;
+                                    });
+                                  }
+                                },
+                                children: <Widget>[
+                                  new ConstrainedBox(
+                                    constraints: const BoxConstraints.expand(),
+                                    child: _buildSignIn(context),
+                                  ),
+                                  new ConstrainedBox(
+                                    constraints: const BoxConstraints.expand(),
+                                    child: _buildSignUp(context),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
-          )
-      )
-      ,
+          )),
     );
   }
 
@@ -252,7 +259,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
-  /*  setState(() {
+    /*  setState(() {
       loginEmailController.text='09378170204';
       loginPasswordController.text='48067';
     });*/
@@ -272,10 +279,8 @@ class _LoginPageState extends State<LoginPage>
       content: new Text(
         value,
         textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "Samim"),
+        style:
+            TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Samim"),
       ),
       backgroundColor: Colors.blue,
       duration: Duration(seconds: 3),
@@ -303,9 +308,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "مدیران",
                   style: TextStyle(
-                      color: left,
-                      fontSize: 16.0,
-                      fontFamily: "Samim"),
+                      color: left, fontSize: 16.0, fontFamily: "Samim"),
                 ),
               ),
             ),
@@ -318,9 +321,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "مددکاران",
                   style: TextStyle(
-                      color: right,
-                      fontSize: 16.0,
-                      fontFamily: "Samim"),
+                      color: right, fontSize: 16.0, fontFamily: "Samim"),
                 ),
               ),
             ),
@@ -337,7 +338,7 @@ class _LoginPageState extends State<LoginPage>
         children: <Widget>[
           Stack(
             alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
+            // overflow: Overflow.visible,
             children: <Widget>[
               Card(
                 elevation: 2.0,
@@ -369,8 +370,8 @@ class _LoginPageState extends State<LoginPage>
                               size: 22.0,
                             ),
                             hintText: "نام کاربری",
-                            hintStyle: TextStyle(
-                                fontFamily: "Samim", fontSize: 17.0),
+                            hintStyle:
+                                TextStyle(fontFamily: "Samim", fontSize: 17.0),
                           ),
                         ),
                       ),
@@ -398,8 +399,8 @@ class _LoginPageState extends State<LoginPage>
                               color: Colors.black,
                             ),
                             hintText: "رمز عبور",
-                            hintStyle: TextStyle(
-                                fontFamily: "Samim", fontSize: 17.0),
+                            hintStyle:
+                                TextStyle(fontFamily: "Samim", fontSize: 17.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleLogin,
                               child: Icon(
@@ -418,51 +419,49 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.Colors.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
-                      color: Theme.Colors.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                  ],
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientEnd2,
-
-                        Theme.Colors.loginGradientStart2
-                      ],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Theme.Colors.loginGradientEnd2,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "ورود",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "Samim"),
+                  margin: EdgeInsets.only(top: 170.0),
+                  decoration: new BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Theme.Colors.loginGradientStart,
+                        offset: Offset(1.0, 6.0),
+                        blurRadius: 20.0,
                       ),
-                    ),
-                    onPressed: () =>
-                      //  showInSnackBar("Login button pressed")),
-                  loginToSystem())
-              ),
+                      BoxShadow(
+                        color: Theme.Colors.loginGradientEnd,
+                        offset: Offset(1.0, 6.0),
+                        blurRadius: 20.0,
+                      ),
+                    ],
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.Colors.loginGradientEnd2,
+                          Theme.Colors.loginGradientStart2
+                        ],
+                        begin: const FractionalOffset(0.2, 0.2),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  child: MaterialButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Theme.Colors.loginGradientEnd2,
+                      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 42.0),
+                        child: Text(
+                          "ورود",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25.0,
+                              fontFamily: "Samim"),
+                        ),
+                      ),
+                      onPressed: () =>
+                          //  showInSnackBar("Login button pressed")),
+                          loginToSystem())),
             ],
           ),
 /*
@@ -532,7 +531,7 @@ class _LoginPageState extends State<LoginPage>
         children: <Widget>[
           Stack(
             alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
+            //overflow: Overflow.visible,
             children: <Widget>[
               Card(
                 elevation: 2.0,
@@ -563,8 +562,8 @@ class _LoginPageState extends State<LoginPage>
                               color: Colors.black,
                             ),
                             hintText: "ایمیل",
-                            hintStyle: TextStyle(
-                                fontFamily: "Samim", fontSize: 16.0),
+                            hintStyle:
+                                TextStyle(fontFamily: "Samim", fontSize: 16.0),
                           ),
                         ),
                       ),
@@ -591,8 +590,8 @@ class _LoginPageState extends State<LoginPage>
                               color: Colors.black,
                             ),
                             hintText: "رمز عبور",
-                            hintStyle: TextStyle(
-                                fontFamily: "Samim", fontSize: 16.0),
+                            hintStyle:
+                                TextStyle(fontFamily: "Samim", fontSize: 16.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleSignup,
                               child: Icon(
@@ -611,50 +610,49 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.Colors.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
-                      color: Theme.Colors.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                  ],
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientEnd2,
-                        Theme.Colors.loginGradientStart2
-                      ],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Theme.Colors.loginGradientEnd,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "ورود مدیران",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "Samim"),
+                  margin: EdgeInsets.only(top: 170.0),
+                  decoration: new BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: Theme.Colors.loginGradientStart,
+                        offset: Offset(1.0, 6.0),
+                        blurRadius: 20.0,
                       ),
-                    ),
-                    onPressed: () =>
-                       // showInSnackBar("SignUp button pressed")),
-                  adminsLogin())
-              ),
+                      BoxShadow(
+                        color: Theme.Colors.loginGradientEnd,
+                        offset: Offset(1.0, 6.0),
+                        blurRadius: 20.0,
+                      ),
+                    ],
+                    gradient: new LinearGradient(
+                        colors: [
+                          Theme.Colors.loginGradientEnd2,
+                          Theme.Colors.loginGradientStart2
+                        ],
+                        begin: const FractionalOffset(0.2, 0.2),
+                        end: const FractionalOffset(1.0, 1.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                  child: MaterialButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Theme.Colors.loginGradientEnd,
+                      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 42.0),
+                        child: Text(
+                          "ورود مدیران",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25.0,
+                              fontFamily: "Samim"),
+                        ),
+                      ),
+                      onPressed: () =>
+                          // showInSnackBar("SignUp button pressed")),
+                          adminsLogin())),
             ],
           ),
         ],

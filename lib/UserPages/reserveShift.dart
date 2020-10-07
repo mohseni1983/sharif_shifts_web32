@@ -117,13 +117,13 @@ class _reserveShiftState extends State<reserveShift> {
   @override
   Widget build(BuildContext context) {
     return
-    DateTime.now().hour<12 || DateTime.now().hour>21?
+    DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30)).hour<12 || DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30)).hour>21?
     Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('ساعت رزرو شیفت بین 12 تا 21 می باشد'),
+            Text(' ساعت رزرو شیفت بین 12 تا 21 می باشد'),
             MaterialButton(
               color: Colors.green,
               child: new Text('بازگشت'),
@@ -286,7 +286,7 @@ class _reserveShiftState extends State<reserveShift> {
                              Checkbox(
                                 value: item.isSelected,
                                onChanged: (v){
-                                  if(itemshiftcount>0)
+                                  if(itemshiftcount>0 || v==false)
                                   setState(() {
                                     item.isSelected=v;
                                   });
@@ -361,6 +361,8 @@ class _reserveShiftState extends State<reserveShift> {
               ]),
     )));
   }
+  
+  List<int> FailedShifts;
 
   void reserve() {
     shift.jobShift.forEach((element) {
@@ -375,11 +377,39 @@ class _reserveShiftState extends State<reserveShift> {
         if(!element.isSelected){
           removeShift(element.id, globalVars.MadadkarId);
         }
+        
+
 
         //
         
       }
     });
+    if(FailedShifts!=null && FailedShifts.length>0){
+      showDialog(context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('خطا در رزرو شیفت'),
+            content: Directionality(
+              textDirection: TextDirection.rtl,
+              child: new Column(
+                children: [
+                  Text('برخی شیفت ها به علت پر شدن ظرفیت ثبت نشدند.')
+                ],
+              ),
+            ),
+            actions: [
+              new MaterialButton(onPressed: (){
+                Navigator.pop(context);
+              },
+                child: new Text('قبول،'),
+              )
+
+            ],
+
+          );
+        },
+      );
+    }
     showInSnackBar('تغییرات ذخیره شد.');
 
     Navigator.of(context).pop();
@@ -391,6 +421,9 @@ class _reserveShiftState extends State<reserveShift> {
     );
     if(response.statusCode==200)
       debugPrint(response.body);
+    else
+      FailedShifts.add(shiftId);
+      
   }
 
   void removeShift(int shiftId,int madadkarId) async{

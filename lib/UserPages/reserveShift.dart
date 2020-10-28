@@ -117,24 +117,6 @@ class _reserveShiftState extends State<reserveShift> {
   @override
   Widget build(BuildContext context) {
     return
-    DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30)).hour<12 || DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30)).hour>21?
-    Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(' ساعت رزرو شیفت بین 12 تا 21 می باشد'),
-            MaterialButton(
-              color: Colors.green,
-              child: new Text('بازگشت'),
-              onPressed: (){
-                Navigator.pop(context);
-              },
-            )
-          ],
-        ),
-      ),
-    ):
 
     shift==null?
         Scaffold(

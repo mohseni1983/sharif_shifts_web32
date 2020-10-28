@@ -9,6 +9,7 @@ import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:sharif_shifts/login/bubble.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -27,8 +28,10 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode myFocusNodePassword = FocusNode();
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
-
   bool isLogin = false;
+
+  Future<SharedPreferences> _prefs=SharedPreferences.getInstance();
+
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
@@ -47,11 +50,16 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.white;
   Color right = Colors.red;
 
+  bool _isSave=false;
+
+
   //Function for login Madadkars
   Future<void> loginToSystem() async {
     setState(() {
       isLogin = true;
     });
+    final SharedPreferences prefs=await _prefs;
+
     String username = loginEmailController.text;
     String password = loginPasswordController.text;
     var result = await http.post('${globalVars.s_url}' + 'token', body: {
@@ -73,6 +81,14 @@ class _LoginPageState extends State<LoginPage>
       });
 
       getMadadkarInfo().then((value) {
+        if (_isSave){
+          prefs.setString('username', username);
+          prefs.setString('password', password);
+          prefs.setBool('isSave', _isSave);
+
+        }else{
+          prefs.clear();
+        }
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return new userMainPage();
@@ -263,6 +279,15 @@ class _LoginPageState extends State<LoginPage>
       loginEmailController.text='09378170204';
       loginPasswordController.text='48067';
     });*/
+    _prefs.then((SharedPreferences prefs) {
+      if (prefs.getBool('isSave')){
+        setState(() {
+          loginEmailController.text=prefs.getString('username');
+          loginPasswordController.text=prefs.getString('password');
+          _isSave=prefs.getBool('isSave');
+        });
+      }
+    });
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -414,6 +439,7 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       ),
+
                     ],
                   ),
                 ),
@@ -461,7 +487,9 @@ class _LoginPageState extends State<LoginPage>
                       ),
                       onPressed: () =>
                           //  showInSnackBar("Login button pressed")),
-                          loginToSystem())),
+                          loginToSystem()
+                  )
+              ),
             ],
           ),
 /*
@@ -519,6 +547,25 @@ class _LoginPageState extends State<LoginPage>
             ),
           ),
 */
+          Divider(
+            color: Colors.black.withAlpha(50),
+            thickness: 2,
+            indent: 55,
+            endIndent: 55,
+
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Checkbox(value: _isSave, onChanged: (value){
+                setState(() {
+                  _isSave=value;
+                });
+              }),
+              Text('ذخیره اطلاعات ورود')
+            ],
+          )
+
         ],
       ),
     );

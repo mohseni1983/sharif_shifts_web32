@@ -5,6 +5,7 @@ import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:sharif_shifts/login/login.dart';
 import 'package:sharif_shifts/ui/CustomWidgets.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
+import 'package:http/http.dart' as http;
 
 //import 'addJobSchedule.dart';
 
@@ -15,6 +16,29 @@ class userMainPage extends StatefulWidget {
 
 class _userMainPageState extends State<userMainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  
+  Future<bool> getClock() async{
+    var response=await http.post(globalVars.s_url+'api/Job/GetClock');
+    if (response.statusCode==200)
+      return true;
+    return false;
+  }
+
+  void showInSnackBar(String value) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(
+        value,
+        textAlign: TextAlign.center,
+        style:
+        TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Samim"),
+      ),
+      backgroundColor: Colors.blue,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
 
   Future<bool> _onWillPop() {
     return showDialog(
@@ -130,8 +154,17 @@ class _userMainPageState extends State<userMainPage> {
                                         ),
                                         label: 'رزرو شیفت',
                                         onPress: () {
+                                          bool response=false;
+                                          getClock().then((value) {
+                                            if (value)
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => reserveShift(),));
+                                            else{
+                                              showInSnackBar('ساعت رزرو شیفت بین 12:00 و 21:00 می باشد.');
+                                            }
 
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => reserveShift(),));
+
+                                          });
+
                                         },
                                       ),
 

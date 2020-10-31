@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:package_info/package_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,6 +21,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  PackageInfo packageInfo=new PackageInfo();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -220,6 +222,7 @@ class _LoginPageState extends State<LoginPage>
                                   image: new AssetImage(
                                       'assets/images/Mini-Logo.png')),
                             ),
+                            Text('نسخه:${packageInfo.version}.${packageInfo.buildNumber}',textScaleFactor: 0.8,),
                             //Text('${DateTime.now().toUtc().add(new Duration(hours: 4,minutes: 30))}'),
                             Padding(
                               padding: EdgeInsets.only(top: 20.0),
@@ -279,6 +282,11 @@ class _LoginPageState extends State<LoginPage>
       loginEmailController.text='09378170204';
       loginPasswordController.text='48067';
     });*/
+    PackageInfo.fromPlatform().then((value) {
+      setState(() {
+        packageInfo=value;
+      });
+    });
     _prefs.then((SharedPreferences prefs) {
       if (prefs.getBool('isSave')){
         setState(() {

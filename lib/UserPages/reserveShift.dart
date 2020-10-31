@@ -31,7 +31,7 @@ class _reserveShiftState extends State<reserveShift> {
 
   Future<JobShifts> getTodayShift() async {
     var response = await http
-        .get('${globalVars.s_url}api/Job/GetTodyJobSchedule?duration=' + '0');
+        .get('${globalVars.s_url}api/Job/GetTodyJobSchedule?duration=' + '1');
     //debugPrint(response.body.length.toString());
     if (response.statusCode == 200 && response.body.length > 4) {
       var res = json.decode(response.body);

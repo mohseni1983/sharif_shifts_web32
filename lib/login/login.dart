@@ -373,7 +373,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 child: Container(
                   width: 300.0,
-                  height: 190.0,
+                  height: 200.0,
                   child: Column(
                     children: <Widget>[
                       Padding(
@@ -588,7 +588,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 child: Container(
                   width: 300.0,
-                  height: 190.0,
+                  height: 200.0,
                   child: Column(
                     children: <Widget>[
                       Padding(

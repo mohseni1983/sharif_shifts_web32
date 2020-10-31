@@ -17,6 +17,14 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.red,
         fontFamily: 'Samim',
+/*
+        textTheme: TextTheme(
+          body1: TextStyle(
+            fontSize: 10.0
+          ),
+
+        ),
+*/
 
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

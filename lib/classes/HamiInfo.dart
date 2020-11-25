@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-HamiInfo hamiInfoFromJson(String str) => HamiInfo.fromJson(json.decode(str));
+Hami hamiFromJson(String str) => Hami.fromJson(json.decode(str));
 
-String hamiInfoToJson(HamiInfo data) => json.encode(data.toJson());
+String hamiToJson(Hami data) => json.encode(data.toJson());
 
-class HamiInfo {
-  HamiInfo({
+class Hami {
+  Hami({
     this.id,
     this.hamiId,
     this.hamiFname,
@@ -40,10 +40,10 @@ class HamiInfo {
   String email;
   String nationalCode;
   int madadkarId;
-  String madadkarName;
-  DateTime editDate;
+  dynamic madadkarName;
+  dynamic editDate;
 
-  factory HamiInfo.fromJson(Map<String, dynamic> json) => HamiInfo(
+  factory Hami.fromJson(Map<String, dynamic> json) => Hami(
     id: json["Id"],
     hamiId: json["HamiId"],
     hamiFname: json["HamiFname"],

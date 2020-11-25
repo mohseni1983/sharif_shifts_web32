@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:sharif_shifts/UserPages/HamiEdit/HamiEditPage.dart';
+import 'package:sharif_shifts/classes/HamiInfo.dart';
 import 'package:sharif_shifts/classes/hami.dart';
 import 'package:http/http.dart' as http;
 import 'package:sharif_shifts/classes/globalVars.dart';
+
+import '../../classes/globalVars.dart';
 
 class hamiList extends StatefulWidget {
 
@@ -28,6 +32,15 @@ class _hamiListState extends State<hamiList> {
     }
     return null;
   }
+
+Future<Hami> getHamiById(int id) async{
+    var result= await http.post(globalVars.s_url+'/api/Madadkar/GetHamiInfo?HamiId='+id.toString());
+    if(result.statusCode==200){
+      return hamiFromJson(result.body);
+    }
+    return null;
+
+}
 
 
   @override
@@ -132,7 +145,10 @@ class _hamiListState extends State<hamiList> {
                                             icon: Icon(Icons.edit),
                                             color: Colors.blueAccent,
                                             onPressed: (){
-                                              debugPrint(s[index].hamiId.toString());
+                                              getHamiById(s[index].hamiId).then((value) {
+                                                if(value!=null)
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HamiEditPage(hamiId: value,)));
+                                              });
                                             },
                                           ),
                                         )

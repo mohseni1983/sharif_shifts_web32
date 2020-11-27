@@ -23,6 +23,12 @@ class Hami {
     this.madadkarId,
     this.madadkarName,
     this.editDate,
+    this.deleteOldMobile1,
+    this.deleteOldMobile2,
+    this.deleteOldPhone1,
+    this.deleteOldPhone2,
+    this.tempSave,
+    this.finalSave,
   });
 
   int id;
@@ -40,8 +46,14 @@ class Hami {
   String email;
   String nationalCode;
   int madadkarId;
-  dynamic madadkarName;
-  dynamic editDate;
+  String madadkarName;
+  String editDate;
+  bool deleteOldMobile1;
+  bool deleteOldMobile2;
+  bool deleteOldPhone1;
+  bool deleteOldPhone2;
+  bool tempSave;
+  bool finalSave;
 
   factory Hami.fromJson(Map<String, dynamic> json) => Hami(
     id: json["Id"],
@@ -61,6 +73,12 @@ class Hami {
     madadkarId: json["MadadkarId"],
     madadkarName: json["MadadkarName"],
     editDate: json["EditDate"],
+    deleteOldMobile1: json["DeleteOldMobile1"],
+    deleteOldMobile2: json["DeleteOldMobile2"],
+    deleteOldPhone1: json["DeleteOldPhone1"],
+    deleteOldPhone2: json["DeleteOldPhone2"],
+    tempSave: json["TempSave"],
+    finalSave: json["FinalSave"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -81,5 +99,11 @@ class Hami {
     "MadadkarId": madadkarId,
     "MadadkarName": madadkarName,
     "EditDate": editDate,
+    "DeleteOldMobile1": deleteOldMobile1,
+    "DeleteOldMobile2": deleteOldMobile2,
+    "DeleteOldPhone1": deleteOldPhone1,
+    "DeleteOldPhone2": deleteOldPhone2,
+    "TempSave": tempSave,
+    "FinalSave": finalSave,
   };
 }

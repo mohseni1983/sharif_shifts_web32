@@ -33,6 +33,18 @@ class _hamiListState extends State<hamiList> {
     return null;
   }
 
+  Future<List<Hami>> GetHamisForEdit() async {
+    List<Hami> res=new List<Hami>();
+    var result = await http.post(globalVars.s_url + 'api/Madadkar/GetHamisForEdit',
+        headers: {'Authorization': 'Bearer ' + globalVars.token});
+    if(result.statusCode==200){
+      Iterable jResult=json.decode(result.body);
+      res= jResult.map((e) => Hami.fromJson(e)).toList();
+      return res;
+    }
+    return null;
+  }
+
 Future<Hami> getHamiById(int id) async{
     var result= await http.post(globalVars.s_url+'/api/Madadkar/GetHamiInfo?HamiId='+id.toString());
     if(result.statusCode==200){
@@ -94,8 +106,8 @@ Future<Hami> getHamiById(int id) async{
                     },
                   )),
               Expanded(
-                child: FutureBuilder<List<HamisInfo>>(
-                  future: GetHamis(),
+                child: FutureBuilder<List<Hami>>(
+                  future: GetHamisForEdit(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var s = snapshot.data;
@@ -104,13 +116,13 @@ Future<Hami> getHamiById(int id) async{
                         itemCount: s.length,
                         itemBuilder: (context, index) {
                           if (_filter != null) {
-                            return '${s[index].hamiLName}'
+                            return '${s[index].hamiLname}'
                                 .contains(_filter) ||
-                                '${s[index].hamiFName}'
+                                '${s[index].hamiFname}'
                                     .contains(_filter) ||
-                                '${s[index].hamiMobile1}'
+                                '${s[index].oldMobile1}'
                                     .contains(_filter) ||
-                                '${s[index].hamiMobile2}'
+                                '${s[index].oldMobile2}'
                                     .contains(_filter)
                                 ?
                             new Container(
@@ -128,33 +140,51 @@ Future<Hami> getHamiById(int id) async{
                                   children: <Widget>[
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment
-                                          .spaceBetween,
+                                          .center,
                                       crossAxisAlignment: CrossAxisAlignment
                                           .center,
                                       children: <Widget>[
                                         new Container(
 
                                           child: new Text(
-                                              '${s[index].hamiFName} ${s[index]
-                                                  .hamiLName}'),
+                                              '${s[index].hamiFname} ${s[index]
+                                                  .hamiLname}',textScaleFactor: 1.2,),
 
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.all(5),
-                                          child: IconButton(
-                                            icon: Icon(Icons.edit),
-                                            color: Colors.blueAccent,
-                                            onPressed: (){
-                                              getHamiById(s[index].hamiId).then((value) {
-                                                if(value!=null)
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HamiEditPage(hamiId: value,)));
-                                              });
-                                            },
-                                          ),
-                                        )
+
 
                                       ],
                                     ),
+                                    Divider(height: 1,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        FlatButton(
+
+                                            child: Text('ویرایش اطلاعات تماس',textScaleFactor: 0.7,),
+                                            onPressed: (){                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HamiEditPage(hamiId: s[index],)));
+                                            },
+                                            color: Colors.amber,
+                                          minWidth: 120,
+
+                                            ),
+                                        FlatButton(onPressed: (){},
+                                            child: Text('ویرایش مددجویان',textScaleFactor: 0.7,),
+                                        color: Colors.blueAccent,
+                                          highlightColor: Colors.white ,
+                                          minWidth: 120,
+                                        )
+                                      ],
+                                    ),
+                                    Divider(height: 1,),
+                                    Row(
+                                      children: [
+                                        Text('وضعیت ویرایش اطلاعات تماس:'),
+                                        s[index].finalSave!=true && s[index].tempSave!=true?Text('ویرایش نشده',style: TextStyle(color: Colors.red),textScaleFactor: 0.8,):
+                                            s[index].finalSave!=true && s[index].tempSave==true?Text('ویرایش موقت',style: TextStyle(color: Colors.yellow),textScaleFactor: 0.8,):
+                                                Text('ویرایش شده',style: TextStyle(color: Colors.green),textScaleFactor: 0.8,)
+                                      ],
+                                    )
 
                                   ],
                                 )
@@ -189,8 +219,8 @@ Future<Hami> getHamiById(int id) async{
 
                                           child: new Text(
                                               '${s[index]
-                                                  .hamiFName} ${s[index]
-                                                  .hamiLName}'),
+                                                  .hamiFname} ${s[index]
+                                                  .hamiLname}'),
 
                                         ),
 

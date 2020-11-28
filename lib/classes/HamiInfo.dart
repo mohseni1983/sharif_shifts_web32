@@ -9,7 +9,9 @@ class Hami {
     this.id,
     this.hamiId,
     this.hamiFname,
+    this.newHamiFname,
     this.hamiLname,
+    this.newHamiLname,
     this.oldMobile1,
     this.newMobile1,
     this.oldMobile2,
@@ -29,12 +31,15 @@ class Hami {
     this.deleteOldPhone2,
     this.tempSave,
     this.finalSave,
+    this.hamiMadadjouSet,
   });
 
   int id;
   int hamiId;
   String hamiFname;
+  String newHamiFname;
   String hamiLname;
+  String newHamiLname;
   String oldMobile1;
   String newMobile1;
   String oldMobile2;
@@ -54,12 +59,15 @@ class Hami {
   bool deleteOldPhone2;
   bool tempSave;
   bool finalSave;
+  List<HamiMadadjouSet> hamiMadadjouSet;
 
   factory Hami.fromJson(Map<String, dynamic> json) => Hami(
     id: json["Id"],
     hamiId: json["HamiId"],
     hamiFname: json["HamiFname"],
+    newHamiFname: json["NewHamiFname"],
     hamiLname: json["HamiLname"],
+    newHamiLname: json["NewHamiLname"],
     oldMobile1: json["OldMobile1"],
     newMobile1: json["NewMobile1"],
     oldMobile2: json["OldMobile2"],
@@ -79,13 +87,16 @@ class Hami {
     deleteOldPhone2: json["DeleteOldPhone2"],
     tempSave: json["TempSave"],
     finalSave: json["FinalSave"],
+    hamiMadadjouSet: List<HamiMadadjouSet>.from(json["HamiMadadjouSet"].map((x) => HamiMadadjouSet.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "Id": id,
     "HamiId": hamiId,
     "HamiFname": hamiFname,
+    "NewHamiFname": newHamiFname,
     "HamiLname": hamiLname,
+    "NewHamiLname": newHamiLname,
     "OldMobile1": oldMobile1,
     "NewMobile1": newMobile1,
     "OldMobile2": oldMobile2,
@@ -105,5 +116,46 @@ class Hami {
     "DeleteOldPhone2": deleteOldPhone2,
     "TempSave": tempSave,
     "FinalSave": finalSave,
+    "HamiMadadjouSet": List<dynamic>.from(hamiMadadjouSet.map((x) => x.toJson())),
+  };
+}
+
+class HamiMadadjouSet {
+  HamiMadadjouSet({
+    this.id,
+    this.hamiId,
+    this.madadjouId,
+    this.madadjouFname,
+    this.madadjouLname,
+    this.amount,
+    this.addDate,
+  });
+
+  int id;
+  int hamiId;
+  int madadjouId;
+  String madadjouFname;
+  String madadjouLname;
+  int amount;
+  String addDate;
+
+  factory HamiMadadjouSet.fromJson(Map<String, dynamic> json) => HamiMadadjouSet(
+    id: json["Id"],
+    hamiId: json["HamiId"],
+    madadjouId: json["MadadjouId"],
+    madadjouFname: json["MadadjouFname"],
+    madadjouLname: json["MadadjouLname"],
+    amount: json["Amount"],
+    addDate: json["AddDate"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "Id": id,
+    "HamiId": hamiId,
+    "MadadjouId": madadjouId,
+    "MadadjouFname": madadjouFname,
+    "MadadjouLname": madadjouLname,
+    "Amount": amount,
+    "AddDate": addDate,
   };
 }

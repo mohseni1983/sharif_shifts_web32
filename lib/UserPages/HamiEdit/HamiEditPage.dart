@@ -1,7 +1,9 @@
+import 'package:contact_picker/contact_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sharif_shifts/classes/HamiInfo.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:sharif_shifts/classes/globalVars.dart';
 class HamiEditPage extends StatefulWidget {
   final Hami hamiId;
 
@@ -13,6 +15,7 @@ class HamiEditPage extends StatefulWidget {
 
 class _HamiEditPageState extends State<HamiEditPage> {
   Hami cHami = new Hami();
+  final ContactPicker _contactPicker = new ContactPicker();
 
   final GlobalKey<ScaffoldState> _scaffoldKey=new GlobalKey<ScaffoldState>();
   void showInSnackBar(String value,Color _color) {
@@ -30,6 +33,22 @@ class _HamiEditPageState extends State<HamiEditPage> {
     ));
   }
 
+  Future<String> getContact() async{
+    String _phoneNumber;
+    Contact contact = await _contactPicker.selectContact();
+    if(contact.phoneNumber!=null){
+        _phoneNumber=contact.phoneNumber.number;
+        _phoneNumber=_phoneNumber.replaceAll('+98', '0');
+        _phoneNumber=_phoneNumber.replaceAll(' ', '');
+        _phoneNumber=_phoneNumber.replaceAll('-', '');
+        //debugPrint('***'+_phoneNumber);
+
+    }
+
+
+
+    return _phoneNumber;
+  }
 
   @override
   void initState() {
@@ -53,6 +72,7 @@ class _HamiEditPageState extends State<HamiEditPage> {
   TextEditingController _hamiEmail=new TextEditingController();
 
   Future<bool> saveHamiInfo() async{
+  bool result=false;
     Hami _editingHami=cHami;
     if (_firstName.text!='' && _firstName.text!=_editingHami.hamiFname)
       _editingHami.newHamiFname=_firstName.text;
@@ -73,10 +93,49 @@ class _HamiEditPageState extends State<HamiEditPage> {
     _editingHami.editDate=DateTime.now().toString();
     _editingHami.finalSave=true;
     _editingHami.tempSave=true;
+    var _body=hamiToJson(_editingHami);
+    try{
+      result=await http.post(globalVars.s_url+'/api/Madadkar/SaveHamiEditInfo',
+          headers: {"Content-Type": "application/json"},
+          body:   _body
+      ).timeout(Duration(seconds: 15)).then((value) {
 
-    return true;
+        if (value.statusCode==200)
+          return true;
+        else return false;
+      });
+
+    }catch(er){
+      result=false;
+     // debugPrint('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr'+er.toString());
+    }
+
+   // if(result.statusCode==200)
+ //   return true;
+  //  return false;
+  //debugPrint('redssdsdsdsdsd');
+    return result;
   }
 
+  Future<void> _showDialog(String title,String message){
+    showDialog(context: context,
+    builder: (context) => new Directionality(textDirection: TextDirection.rtl,
+
+        child: AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            MaterialButton(onPressed: (){
+              Navigator.of(context).pop();
+            },
+            color: Colors.green,
+              child: Text('قبول'),
+            )
+          ],
+        )),
+    );
+  }
+bool _isSaving=false;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +147,24 @@ class _HamiEditPageState extends State<HamiEditPage> {
           title: Text('ویرایش اطلاعات حامی'),
           centerTitle: true,
         ),
-        body: Stack(
+        body:
+            _isSaving?
+                Center(
+                  child: Container(
+                    height: 200,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        Text('درحال ذخیره سازی')
+                      ],
+                    ),
+                  ),
+                ):
+
+
+        Stack(
           children: [
             Container(
                 height: MediaQuery.of(context).size.height,
@@ -162,10 +238,14 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                         Row(
                                           children: [
                                             Text('نام:'),
-                                            Text(cHami.hamiFname,textScaleFactor: 1.2,),
+                                            cHami.newHamiFname==null?
+                                            Text(cHami.hamiFname,textScaleFactor: 1.2,):
+                                            Text(cHami.newHamiFname,textScaleFactor: 1.2,),
                                             IconButton(icon: Icon(Icons.edit), onPressed: (){
                                               setState(() {
-                                                _firstName.text=cHami.hamiFname;
+                                                cHami.newHamiFname==null?
+                                                _firstName.text=cHami.hamiFname:
+                                                _firstName.text=cHami.newHamiFname;
                                                 _editFirstName=true;
                                               });
                                             })
@@ -207,10 +287,14 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                     Row(
                                       children: [
                                         Text('نام خانوادگی:'),
-                                        Text(cHami.hamiLname,textScaleFactor: 1.2,),
+                                        cHami.newHamiLname==null?
+                                        Text(cHami.hamiLname,textScaleFactor: 1.2,):
+                                        Text(cHami.newHamiLname,textScaleFactor: 1.2,),
                                         IconButton(icon: Icon(Icons.edit), onPressed: (){
                                           setState(() {
-                                            _lastName.text=cHami.hamiLname;
+                                             cHami.newHamiLname==null?
+                                            _lastName.text=cHami.hamiLname:
+                                            _lastName.text=cHami.newHamiLname;
                                             _editLastName=true;
                                           });
                                         })
@@ -309,7 +393,19 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                                     return 'شماره صحیح نیست';
                                                   return null;
                                                 },
-                                              ))
+                                              )),
+                                          IconButton(icon: Icon(Icons.contacts,size: 35,color: Colors.brown,),
+                                              onPressed: () {
+                                                  getContact().then((value) {
+                                                    setState(() {
+                                                      _newMobile1.text=value;
+                                                    });
+                                                  });
+
+
+                                            }),
+
+
                                         ],
                                       ),
                                     )
@@ -413,7 +509,18 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                                                 '09'))
                                                       return 'شماره صحیح نیست';
                                                     return null;
-                                                  }))
+                                                  })),
+                                          IconButton(icon: Icon(Icons.contacts,size: 35,color: Colors.brown,),
+                                              onPressed: () {
+                                                getContact().then((value) {
+                                                  setState(() {
+                                                    _newMobile2.text=value;
+                                                  });
+                                                });
+
+
+                                              }),
+
                                         ],
                                       ),
                                     )
@@ -482,7 +589,18 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                                                 '0'))
                                                       return 'شماره صحیح نیست';
                                                     return null;
-                                                  }))
+                                                  })),
+                                          IconButton(icon: Icon(Icons.contacts,size: 35,color: Colors.brown,),
+                                              onPressed: () {
+                                                getContact().then((value) {
+                                                  setState(() {
+                                                    _newPhone1.text=value;
+                                                  });
+                                                });
+
+
+                                              }),
+
                                         ],
                                       ),
                                     )
@@ -551,7 +669,18 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                                                 '0'))
                                                       return 'شماره صحیح نیست';
                                                     return null;
-                                                  }))
+                                                  })),
+                                          IconButton(icon: Icon(Icons.contacts,size: 35,color: Colors.brown,),
+                                              onPressed: () {
+                                                getContact().then((value) {
+                                                  setState(() {
+                                                    _newPhone2.text=value;
+                                                  });
+                                                });
+
+
+                                              }),
+
                                         ],
                                       ),
                                     )
@@ -677,7 +806,9 @@ class _HamiEditPageState extends State<HamiEditPage> {
                                                         'پست الکترونیک حامی'),
                                                 keyboardType:
                                                     TextInputType.emailAddress,
-                                              ))
+                                              )),
+
+
                                         ],
                                       ),
                                     )
@@ -690,15 +821,23 @@ class _HamiEditPageState extends State<HamiEditPage> {
                       MaterialButton(
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
+                            setState(() {
+                              _isSaving=true;
+                            });
                            // Scaffold.of(context).showSnackBar(SnackBar(content: Text('ذخیره سازی صحیح است')));
                             saveHamiInfo().then((value) {
+                              setState(() {
+                                _isSaving=false;
+                              });
                               if(value)
-                                showInSnackBar('ذخیره سازی انجام شد',Colors.lightBlue);
+                                _showDialog('عملیات موفق', 'اطلاعات با موفقیت ذخیره شد').then((value) => Navigator.of(context).pop());
+                              else{
+                                debugPrint('TEST TEST');
+                                _showDialog('خطا در عملیات', 'در ذخیره سازی خطایی رخ داده است\r\nاتصال اینترنت را بررسی کنید');
+                              }
 
                             });
                            // debugPrint('OK OK OK ================');
-                          }else{
-                            showInSnackBar('اطلاعات وارد شده ایراد دارد', Colors.red);
                           }
                         },
                         child: Row(

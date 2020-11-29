@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sharif_shifts/UserPages/HamiEdit/HamiEditPage.dart';
+import 'package:sharif_shifts/UserPages/HamiEdit/MadadjousEditPage.dart';
 import 'package:sharif_shifts/classes/HamiInfo.dart';
+import 'package:sharif_shifts/classes/Madadjous.dart';
 import 'package:sharif_shifts/classes/hami.dart';
 import 'package:http/http.dart' as http;
 import 'package:sharif_shifts/classes/globalVars.dart';
@@ -18,6 +21,8 @@ class hamiList extends StatefulWidget {
 class _hamiListState extends State<hamiList> {
 
   String _filter = '';
+  bool _getingMadadjoulist=false;
+  List<Madadjous> _MadadjouList;
 
   Future<List<HamisInfo>> GetHamis() async {
     List<HamisInfo> res = new List<HamisInfo>();
@@ -31,6 +36,18 @@ class _hamiListState extends State<hamiList> {
       return res;
     }
     return null;
+  }
+  
+  Future<List<Madadjous>> getMadadjous() async{
+    var result=await http.post(globalVars.s_url+'api/Madadkar/GetMadadjouList');
+      if(result.statusCode==200){
+        var rs=madadjousFromJson(result.body);
+        return rs;
+
+      }
+      return null;
+
+
   }
 
   Future<List<Hami>> GetHamisForEdit() async {
@@ -54,7 +71,25 @@ Future<Hami> getHamiById(int id) async{
 
 }
 
+@override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      _getingMadadjoulist=true;
+    });
+    getMadadjous().then((value) {
+      if(value!=null){
+        setState(() {
+          _MadadjouList=value;
+          _getingMadadjoulist=false;
+        });
 
+      }
+
+    });
+    super.initState();
+
+}
   @override
   Widget build(BuildContext context) {
 
@@ -84,7 +119,21 @@ Future<Hami> getHamiById(int id) async{
           ),
 
           padding: EdgeInsets.fromLTRB(8, 0, 8, 6),
-          child: new Column(
+          child:
+          _getingMadadjoulist?
+              Center(child:
+                Container(
+                  height: 150,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      Text('درحال دریافت لیست مددجوها')
+                    ],
+                  ),
+                ),):
+          new Column(
             children: <Widget>[
               new Container(
                 //height: 50,
@@ -168,7 +217,9 @@ Future<Hami> getHamiById(int id) async{
                                           minWidth: 120,
 
                                             ),
-                                        FlatButton(onPressed: (){},
+                                        FlatButton(onPressed: (){
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MadadjousEdit(hami: s[index],madadjous: _MadadjouList,),));
+                                        },
                                             child: Text('ویرایش مددجویان',textScaleFactor: 0.7,),
                                         color: Colors.blueAccent,
                                           highlightColor: Colors.white ,
@@ -238,11 +289,11 @@ Future<Hami> getHamiById(int id) async{
                     return new Center(
                       child: Container(
                         height: 150,
-                        width: 150,
+                       // width: 150,
                         child: new Column(
                           children: <Widget>[
                             CircularProgressIndicator(),
-                            new Text('در حال دریافت اطلاعات')
+                            new Text('در حال دریافت لیست حامیان')
                           ],
                         ),
                       ),

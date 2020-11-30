@@ -3,6 +3,7 @@ import 'dart:convert';
 Hami hamiFromJson(String str) => Hami.fromJson(json.decode(str));
 
 String hamiToJson(Hami data) => json.encode(data.toJson());
+String hamiMadadjouSetToJson(HamiMadadjouSet data)=>json.encode(data.toJson());
 
 class Hami {
   Hami({

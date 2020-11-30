@@ -90,6 +90,7 @@ Future<Hami> getHamiById(int id) async{
     super.initState();
 
 }
+
   @override
   Widget build(BuildContext context) {
 
@@ -218,7 +219,11 @@ Future<Hami> getHamiById(int id) async{
 
                                             ),
                                         FlatButton(onPressed: (){
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MadadjousEdit(hami: s[index],madadjous: _MadadjouList,),));
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MadadjousEdit(hami: s[index],madadjous: _MadadjouList,),)).then((value) {
+                                            setState(() {
+
+                                            });
+                                          });
                                         },
                                             child: Text('ویرایش مددجویان',textScaleFactor: 0.7,),
                                         color: Colors.blueAccent,

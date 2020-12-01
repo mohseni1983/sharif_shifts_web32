@@ -222,7 +222,16 @@ bool _isSaving=false;
                                               child: TextFormField(
                                                 //maxLength: 25,
                                                 decoration: InputDecoration(
-                                                    hintText: 'نام'),
+                                                    hintText: 'نام',
+                                                  suffixIcon: IconButton(icon: Icon(Icons.save,color: Colors.brown,),onPressed: (){
+                                                    setState(() {
+                                                      cHami.newHamiFname=_firstName.text;
+
+                                                      _editFirstName=false;
+                                                    });
+                                                  },)
+
+                                      ),
                                                 keyboardType:
                                                 TextInputType.text,
                                                 controller: _firstName,
@@ -271,7 +280,16 @@ bool _isSaving=false;
                                               child: TextFormField(
                                                 //maxLength: 25,
                                                 decoration: InputDecoration(
-                                                    hintText: 'نام خانوادگی'),
+                                                    hintText: 'نام خانوادگی',
+                                                    suffixIcon: IconButton(icon: Icon(Icons.save,color: Colors.brown,),onPressed: (){
+                                                      setState(() {
+                                                        cHami.newHamiLname=_lastName.text;
+
+                                                        _editLastName=false;
+                                                      });
+                                                    },)
+
+                                                ),
                                                 keyboardType:
                                                 TextInputType.text,
                                                 controller: _lastName,

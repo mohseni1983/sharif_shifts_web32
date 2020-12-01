@@ -90,7 +90,7 @@ Future<Hami> getHamiById(int id) async{
     super.initState();
 
 }
-
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
 
@@ -101,214 +101,231 @@ Future<Hami> getHamiById(int id) async{
           title: Text('لیست حامیان'),
         ),
         body:
-        new Container(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height,
-          width: MediaQuery.of(context).size.width,
-          decoration: new BoxDecoration(
-            gradient: new LinearGradient(
-                colors: [
-                  Colors.white,
-                  Colors.red
-                ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 1.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
-          ),
+          RefreshIndicator(
+            onRefresh: () async{
+              GetHamisForEdit().then((value) {
+                if(value!=null)
+                setState(() {
 
-          padding: EdgeInsets.fromLTRB(8, 0, 8, 6),
-          child:
-          _getingMadadjoulist?
-              Center(child:
-                Container(
-                  height: 150,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      Text('درحال دریافت لیست مددجوها')
+                });
+              } );
+            },
+            key: refreshKey,
+            child:
+            new Container(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              width: MediaQuery.of(context).size.width,
+              decoration: new BoxDecoration(
+                gradient: new LinearGradient(
+                    colors: [
+                      Colors.white,
+                      Colors.red
                     ],
-                  ),
-                ),):
-          new Column(
-            children: <Widget>[
-              new Container(
-                //height: 50,
-                  color: Colors.black26,
-                  child: new TextField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search, color: Colors.white,),
-                      hintText: 'جستجوی حامی',
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 1.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+              ),
+
+              padding: EdgeInsets.fromLTRB(8, 0, 8, 6),
+              child:
+              _getingMadadjoulist?
+              Center(child:
+              Container(
+                height: 150,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text('درحال دریافت لیست مددجوها')
+                  ],
+                ),
+              ),):
+              new Column(
+                children: <Widget>[
+                  new Container(
+                    //height: 50,
+                      color: Colors.black26,
+                      child: new TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search, color: Colors.white,),
+                          hintText: 'جستجوی حامی',
 
 
-                    ),
+                        ),
 
-                    //controller: _searchController,
-                    onChanged: (String value) {
-                      debugPrint(_filter);
-                      setState(() {
-                        _filter = value;
-                      });
-                    },
-                  )),
-              Expanded(
-                child: FutureBuilder<List<Hami>>(
-                  future: GetHamisForEdit(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var s = snapshot.data;
+                        //controller: _searchController,
+                        onChanged: (String value) {
+                          debugPrint(_filter);
+                          setState(() {
+                            _filter = value;
+                          });
+                        },
+                      )),
+                  Expanded(
+                    child: FutureBuilder<List<Hami>>(
+                      future: GetHamisForEdit(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var s = snapshot.data;
 
-                      return ListView.builder(
-                        itemCount: s.length,
-                        itemBuilder: (context, index) {
-                          if (_filter != null) {
-                            return '${s[index].hamiLname}'
-                                .contains(_filter) ||
-                                '${s[index].hamiFname}'
+                          return ListView.builder(
+                            itemCount: s.length,
+                            itemBuilder: (context, index) {
+                              if (_filter != null) {
+                                return '${s[index].hamiLname}'
                                     .contains(_filter) ||
-                                '${s[index].oldMobile1}'
-                                    .contains(_filter) ||
-                                '${s[index].oldMobile2}'
-                                    .contains(_filter)
-                                ?
-                            new Container(
-                                decoration: new BoxDecoration(
-                                  color: Colors.grey.shade200.withOpacity(
-                                      0.3),
-                                  borderRadius: new BorderRadius.circular(
-                                      5.0),
-                                ),
-                                padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
-                                margin: EdgeInsets.all(4),
-                                child:
-                                new
-                                Column(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
-                                      children: <Widget>[
-                                        new Container(
-
-                                          child: new Text(
-                                              '${s[index].hamiFname} ${s[index]
-                                                  .hamiLname}',textScaleFactor: 1.2,),
-
-                                        ),
+                                    '${s[index].hamiFname}'
+                                        .contains(_filter) ||
+                                    '${s[index].oldMobile1}'
+                                        .contains(_filter) ||
+                                    '${s[index].oldMobile2}'
+                                        .contains(_filter)||
+                                    '${s[index].newHamiFname}'
+                                        .contains(_filter)||
+                                    '${s[index].newHamiLname}'
+                                        .contains(_filter)
 
 
-                                      ],
+                                    ?
+                                new Container(
+                                    decoration: new BoxDecoration(
+                                      color: Colors.grey.shade200.withOpacity(
+                                          0.3),
+                                      borderRadius: new BorderRadius.circular(
+                                          5.0),
                                     ),
-                                    Divider(height: 1,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        FlatButton(
+                                    padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                                    margin: EdgeInsets.all(4),
+                                    child:
+                                    new
+                                    Column(
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .center,
+                                          children: <Widget>[
+                                            new Container(
 
-                                            child: Text('ویرایش اطلاعات تماس',textScaleFactor: 0.7,),
-                                            onPressed: (){                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HamiEditPage(hamiId: s[index],)));
-                                            },
-                                            color: Colors.amber,
-                                          minWidth: 120,
+                                              child: new Text(
+                                                '${s[index].newHamiFname==null? s[index].hamiFname:s[index].newHamiFname} ${s[index].newHamiLname==null? s[index].hamiLname:s[index].newHamiLname}',textScaleFactor: 1.2,),
 
                                             ),
-                                        FlatButton(onPressed: (){
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MadadjousEdit(hami: s[index],madadjous: _MadadjouList,),)).then((value) {
-                                            setState(() {
 
-                                            });
-                                          });
-                                        },
-                                            child: Text('ویرایش مددجویان',textScaleFactor: 0.7,),
-                                        color: Colors.blueAccent,
-                                          highlightColor: Colors.white ,
-                                          minWidth: 120,
-                                        )
-                                      ],
-                                    ),
-                                    Divider(height: 1,),
-                                    Row(
-                                      children: [
-                                        Text('وضعیت ویرایش اطلاعات تماس:'),
-                                        s[index].finalSave!=true && s[index].tempSave!=true?Text('ویرایش نشده',style: TextStyle(color: Colors.red),textScaleFactor: 0.8,):
+
+                                          ],
+                                        ),
+                                        Divider(height: 1,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            FlatButton(
+
+                                              child: Text('ویرایش اطلاعات تماس',textScaleFactor: 0.7,),
+                                              onPressed: (){                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HamiEditPage(hamiId: s[index],)));
+                                              },
+                                              color: Colors.amber,
+                                              minWidth: 120,
+
+                                            ),
+                                            FlatButton(onPressed: (){
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => MadadjousEdit(hami: s[index],madadjous: _MadadjouList,),)).then((value) {
+                                                refreshKey.currentState.show();
+                                              });
+                                            },
+                                              child: Text('ویرایش مددجویان',textScaleFactor: 0.7,),
+                                              color: Colors.blueAccent,
+                                              highlightColor: Colors.white ,
+                                              minWidth: 120,
+                                            )
+                                          ],
+                                        ),
+                                        Divider(height: 1,),
+                                        Row(
+                                          children: [
+                                            Text('وضعیت ویرایش اطلاعات تماس:'),
+                                            s[index].finalSave!=true && s[index].tempSave!=true?Text('ویرایش نشده',style: TextStyle(color: Colors.red),textScaleFactor: 0.8,):
                                             s[index].finalSave!=true && s[index].tempSave==true?Text('ویرایش موقت',style: TextStyle(color: Colors.yellow),textScaleFactor: 0.8,):
-                                                Text('ویرایش شده',style: TextStyle(color: Colors.green),textScaleFactor: 0.8,)
+                                            Text('ویرایش شده',style: TextStyle(color: Colors.green),textScaleFactor: 0.8,)
+                                          ],
+                                        )
+
                                       ],
                                     )
-
-                                  ],
                                 )
-                            )
 
-                                : Container(
-                              width: 0,
-                              height: 0,
-                            );
-                          }
-                          return
-                            new Container(
-                                decoration: new BoxDecoration(
-                                  color: Colors.grey.shade200.withOpacity(
-                                      0.3),
-                                  borderRadius: new BorderRadius.circular(
-                                      5.0),
-                                ),
-                                padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
-                                margin: EdgeInsets.all(4),
-                                child:
-                                new
-                                Column(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
+                                    : Container(
+                                  width: 0,
+                                  height: 0,
+                                );
+                              }
+                              return
+                                new Container(
+                                    decoration: new BoxDecoration(
+                                      color: Colors.grey.shade200.withOpacity(
+                                          0.3),
+                                      borderRadius: new BorderRadius.circular(
+                                          5.0),
+                                    ),
+                                    padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                                    margin: EdgeInsets.all(4),
+                                    child:
+                                    new
+                                    Column(
                                       children: <Widget>[
-                                        new Container(
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .center,
+                                          children: <Widget>[
+                                            new Container(
 
-                                          child: new Text(
-                                              '${s[index]
-                                                  .hamiFname} ${s[index]
-                                                  .hamiLname}'),
+                                              child: new Text(
+                                                  '${s[index]
+                                                      .hamiFname} ${s[index]
+                                                      .hamiLname}'),
 
+                                            ),
+
+
+                                          ],
                                         ),
 
 
                                       ],
-                                    ),
-
-
-                                  ],
-                                )
-                            );
-                        },
-                      );
-                    }
-                    return new Center(
-                      child: Container(
-                        height: 150,
-                       // width: 150,
-                        child: new Column(
-                          children: <Widget>[
-                            CircularProgressIndicator(),
-                            new Text('در حال دریافت لیست حامیان')
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
-        )),
+                                    )
+                                );
+                            },
+                          );
+                        }
+                        return new Center(
+                          child: Container(
+                            height: 150,
+                            // width: 150,
+                            child: new Column(
+                              children: <Widget>[
+                                CircularProgressIndicator(),
+                                new Text('در حال دریافت لیست حامیان')
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            )
+            ,
+          )
+      ),
 
     );
 

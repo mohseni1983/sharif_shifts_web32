@@ -1,4 +1,4 @@
-import 'package:contact_picker/contact_picker.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sharif_shifts/classes/HamiInfo.dart';
@@ -15,7 +15,7 @@ class HamiEditPage extends StatefulWidget {
 
 class _HamiEditPageState extends State<HamiEditPage> {
   Hami cHami = new Hami();
-  final ContactPicker _contactPicker = new ContactPicker();
+  PhoneContact  _contactPicker;
 
   final GlobalKey<ScaffoldState> _scaffoldKey=new GlobalKey<ScaffoldState>();
   void showInSnackBar(String value,Color _color) {
@@ -35,12 +35,14 @@ class _HamiEditPageState extends State<HamiEditPage> {
 
   Future<String> getContact() async{
     String _phoneNumber;
-    Contact contact = await _contactPicker.selectContact();
+    PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
     if(contact.phoneNumber!=null){
         _phoneNumber=contact.phoneNumber.number;
         _phoneNumber=_phoneNumber.replaceAll('+98', '0');
         _phoneNumber=_phoneNumber.replaceAll(' ', '');
         _phoneNumber=_phoneNumber.replaceAll('-', '');
+        _phoneNumber=_phoneNumber.replaceAll('(', '');
+        _phoneNumber=_phoneNumber.replaceAll(')', '');
         //debugPrint('***'+_phoneNumber);
 
     }

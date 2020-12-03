@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sharif_shifts/UserPages/HamiEdit/HamiList.dart';
@@ -58,11 +60,14 @@ class _userMainPageState extends State<userMainPage> {
                         onPressed: () {
 
                           globalVars.token="";
+/*
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => LoginPage(),
                               ));
+*/
+                        exit(0);
     },
                         /*Navigator.of(context).pop(true)*/
                         child: Text('بلی'),

@@ -68,8 +68,12 @@ class _CampaignPageState extends State<CampaignPage> {
                 switch(snapshot.connectionState){
                   case ConnectionState.waiting:
                   case ConnectionState.active:
-                    return CircularProgressIndicator();
-                    break;
+                  return Center(
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        child: CircularProgressIndicator(),
+                      ));                    break;
                   case ConnectionState.done:
                     if(snapshot.hasData)
                       {
@@ -191,8 +195,12 @@ class _CampaignPageState extends State<CampaignPage> {
                     // TODO: Handle this case.
                     break;
                 }
-                return CircularProgressIndicator();
-              },
+                return Center(
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(),
+                    ));              },
             ),
           ),
         ) );

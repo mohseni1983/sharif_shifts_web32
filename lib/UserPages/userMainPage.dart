@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sharif_shifts/UserPages/Donation/CampaingsPage.dart';
 import 'package:sharif_shifts/UserPages/HamiEdit/HamiList.dart';
 import 'package:sharif_shifts/UserPages/reserveShift.dart';
 import 'package:sharif_shifts/classes/globalVars.dart';
@@ -9,6 +10,8 @@ import 'package:sharif_shifts/login/login.dart';
 import 'package:sharif_shifts/ui/CustomWidgets.dart';
 import 'package:sharif_shifts/ui/theme.dart' as Theme;
 import 'package:http/http.dart' as http;
+
+import 'Donation/DonationPage.dart';
 
 //import 'addJobSchedule.dart';
 
@@ -178,6 +181,20 @@ class _userMainPageState extends State<userMainPage> {
                                         label: 'ویرایش حامی',
                                         onPress: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => hamiList()));
+                                        },
+                                      ),
+                                      gridIcon(
+                                        icon: Icon(Icons.campaign),
+                                        label: 'کمپین ها',
+                                        onPress: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => CampaignPage()));
+                                        },
+                                      ),
+                                      gridIcon(
+                                        icon: Icon(Icons.monetization_on),
+                                        label: 'حمایت ها',
+                                        onPress: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => DonationPage()));
                                         },
                                       )
 

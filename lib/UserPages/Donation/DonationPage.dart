@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:sharif_shifts/classes/donation.dart';
 import 'package:sharif_shifts/classes/globalVars.dart';
 import 'package:persian_date/persian_date.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:share/share.dart';
+
 
 
 class DonationPage extends StatefulWidget {
@@ -18,11 +21,29 @@ class DonationPage extends StatefulWidget {
 class _DonationPageState extends State<DonationPage> {
 int final_total=0;
 PersianDate persianDate=new PersianDate();
+
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+void showInSnackBar(String value) {
+  FocusScope.of(context).requestFocus(new FocusNode());
+  _scaffoldKey.currentState?.removeCurrentSnackBar();
+  _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    content: new Text(
+      value,
+      textAlign: TextAlign.center,
+      style:
+      TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "Samim"),
+    ),
+    backgroundColor: Colors.blue,
+    duration: Duration(seconds: 3),
+  ));
+}
+
   @override
   Widget build(BuildContext context) {
 
     return Directionality(textDirection: TextDirection.rtl,
         child: Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
             title: Text('لیست واریزها'),
             centerTitle: true,
@@ -202,6 +223,68 @@ PersianDate persianDate=new PersianDate();
                       );
                     },
                   ),
+                  widget.campaign_id==0?
+                  Positioned(
+                      bottom: 6,
+                      left: 8,
+                      right: 8,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                        alignment: Alignment.center,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(width: 0.7,color: Colors.black38,style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black45,
+                              offset: Offset(-4,-1),
+                              spreadRadius: 5,
+                              blurRadius: 5
+                            )
+                          ]
+                        ),
+                        child: Column(
+                          children: [
+                            RaisedButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.copy,color: Colors.white,),
+                                  Text('کپی لینک حمایت عمومی',style: TextStyle(color: Colors.white),),
+
+
+                                ],
+                              ),
+                              color: Colors.green.shade900,
+                              onPressed: (){
+                                FlutterClipboard.copy('https://sharifngo.com/p/'+globalVars.MadadkarId.toString()).then((value) => showInSnackBar('لینک در حافظه کپی شد'));
+                              },
+                            ),
+                            RaisedButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.share,color: Colors.white,),
+                                  Text('اشتراک گذاری لینک حمایت عمومی',style: TextStyle(color: Colors.white),),
+
+                                ],
+                              ),
+                              color: Colors.blue.shade900,
+                              onPressed: (){
+                                Share.share('https://sharifngo.com/p/'+globalVars.MadadkarId.toString());
+                              },
+                            ),
+
+                          ],
+                        )
+
+                      )
+                  ):
+                      Container(
+                        height: 0,
+                      )
 
                 ],
               )

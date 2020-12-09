@@ -177,21 +177,21 @@ class _userMainPageState extends State<userMainPage> {
                                         },
                                       ),
                                       gridIcon(
-                                        icon: Icon(Icons.add_call),
+                                        icon: Icon(Icons.person,size: 35,),
                                         label: 'ویرایش حامی',
                                         onPress: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => hamiList()));
                                         },
                                       ),
                                       gridIcon(
-                                        icon: Icon(Icons.campaign),
+                                        icon: Icon(Icons.campaign,size: 35,),
                                         label: 'کمپین ها',
                                         onPress: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => CampaignPage()));
                                         },
                                       ),
                                       gridIcon(
-                                        icon: Icon(Icons.monetization_on),
+                                        icon: Icon(Icons.monetization_on,size: 35,),
                                         label: 'حمایت ها',
                                         onPress: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context) => DonationPage()));

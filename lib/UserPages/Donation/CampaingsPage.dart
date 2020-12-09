@@ -117,7 +117,7 @@ class _CampaignPageState extends State<CampaignPage> {
                                            mainAxisSize: MainAxisSize.max,
                                            children: [
                                              RaisedButton(onPressed: (){
-                                               FlutterClipboard.copy('https://sharifngo.com/cg/${data[index].slug}/${globalVars.MadadkarId}').then((value) {
+                                               FlutterClipboard.copy('https://sharifngo.com/p/${data[index].slug}/${globalVars.MadadkarId}').then((value) {
                                                  showInSnackBar('لینک در حافظه کپی شد');
                                                });
                       },
@@ -133,7 +133,7 @@ class _CampaignPageState extends State<CampaignPage> {
                                                color: Colors.green.shade900,
                                              ),
                                              RaisedButton(onPressed: (){
-                                               Share.share('کمپین ${data[index].title.rendered.replaceAll(new RegExp(r'(\d+)'), '').replaceAll('&', '').replaceAll('#', '').replaceAll(';', '')}  https://sharifngo.com/cg/${data[index].slug}/${globalVars.MadadkarId}',subject:data[index].title.rendered.replaceAll(new RegExp(r'(\d+)'), '').replaceAll('&', '').replaceAll('#', '').replaceAll(';', '') );
+                                               Share.share('کمپین ${data[index].title.rendered.replaceAll(new RegExp(r'(\d+)'), '').replaceAll('&', '').replaceAll('#', '').replaceAll(';', '')}  https://sharifngo.com/p/${data[index].slug}/${globalVars.MadadkarId}',subject:data[index].title.rendered.replaceAll(new RegExp(r'(\d+)'), '').replaceAll('&', '').replaceAll('#', '').replaceAll(';', '') );
                                              },
 
                                                child: Row(
